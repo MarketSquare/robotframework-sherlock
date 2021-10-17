@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 4.1.1 (Python 3.9.2 on win32)" generated="20211011 13:40:06.653" rpa="false" schemaversion="2">
+<suite id="s1" name="Tests" source="C:\Users\barte\Desktop\sherlock\test_data\tests">
+<suite id="s1-s1" name="Nested" source="C:\Users\barte\Desktop\sherlock\test_data\tests\nested">
+<suite id="s1-s1-s1" name="Test" source="C:\Users\barte\Desktop\sherlock\test_data\tests\nested\test.robot">
+<test id="s1-s1-s1-t1" name="Test A">
+<for flavor="IN RANGE">
+<var>${a}</var>
+<value>${B}</value>
+<iter>
+<var name="${a}">0</var>
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.691" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.691" endtime="20211011 13:40:06.691"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.690" endtime="20211011 13:40:06.691"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.691" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.691" endtime="20211011 13:40:06.691"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.691" endtime="20211011 13:40:06.692"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.691" endtime="20211011 13:40:06.692"/>
+</kw>
+<kw name="Keyword 4" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.692" level="INFO">4</msg>
+<status status="PASS" starttime="20211011 13:40:06.692" endtime="20211011 13:40:06.692"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.692" endtime="20211011 13:40:06.692"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.690" endtime="20211011 13:40:06.692"/>
+</iter>
+<iter>
+<var name="${a}">1</var>
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.693" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.692" endtime="20211011 13:40:06.693"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.692" endtime="20211011 13:40:06.693"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.693" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.693" endtime="20211011 13:40:06.693"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.693" endtime="20211011 13:40:06.693"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.693" endtime="20211011 13:40:06.693"/>
+</kw>
+<kw name="Keyword 4" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.694" level="INFO">4</msg>
+<status status="PASS" starttime="20211011 13:40:06.694" endtime="20211011 13:40:06.694"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.694" endtime="20211011 13:40:06.694"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.692" endtime="20211011 13:40:06.694"/>
+</iter>
+<iter>
+<var name="${a}">2</var>
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.695" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.694" endtime="20211011 13:40:06.695"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.694" endtime="20211011 13:40:06.695"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.695" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.695" endtime="20211011 13:40:06.695"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.695" endtime="20211011 13:40:06.695"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.695" endtime="20211011 13:40:06.695"/>
+</kw>
+<kw name="Keyword 4" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.696" level="INFO">4</msg>
+<status status="PASS" starttime="20211011 13:40:06.696" endtime="20211011 13:40:06.696"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.696" endtime="20211011 13:40:06.696"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.694" endtime="20211011 13:40:06.696"/>
+</iter>
+<iter>
+<var name="${a}">3</var>
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.696" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.696" endtime="20211011 13:40:06.696"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.696" endtime="20211011 13:40:06.697"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.697" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.697" endtime="20211011 13:40:06.697"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.697" endtime="20211011 13:40:06.697"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.697" endtime="20211011 13:40:06.697"/>
+</kw>
+<kw name="Keyword 4" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.698" level="INFO">4</msg>
+<status status="PASS" starttime="20211011 13:40:06.698" endtime="20211011 13:40:06.698"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.698" endtime="20211011 13:40:06.698"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.696" endtime="20211011 13:40:06.698"/>
+</iter>
+<iter>
+<var name="${a}">4</var>
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.699" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.698" endtime="20211011 13:40:06.699"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.698" endtime="20211011 13:40:06.699"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.699" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.699" endtime="20211011 13:40:06.699"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.699" endtime="20211011 13:40:06.699"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.699" endtime="20211011 13:40:06.700"/>
+</kw>
+<kw name="Keyword 4" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>4</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.700" level="INFO">4</msg>
+<status status="PASS" starttime="20211011 13:40:06.700" endtime="20211011 13:40:06.700"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.700" endtime="20211011 13:40:06.700"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.698" endtime="20211011 13:40:06.700"/>
+</iter>
+<status status="PASS" starttime="20211011 13:40:06.690" endtime="20211011 13:40:06.700"/>
+</for>
+<kw name="Internal_keyword">
+<kw name="Log" library="BuiltIn">
+<arg>Internal</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.701" level="INFO">Internal</msg>
+<status status="PASS" starttime="20211011 13:40:06.701" endtime="20211011 13:40:06.701"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.701" endtime="20211011 13:40:06.701"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.688" endtime="20211011 13:40:06.702"/>
+</test>
+<status status="PASS" starttime="20211011 13:40:06.681" endtime="20211011 13:40:06.703"/>
+</suite>
+<status status="PASS" starttime="20211011 13:40:06.678" endtime="20211011 13:40:06.706"/>
+</suite>
+<suite id="s1-s2" name="Test" source="C:\Users\barte\Desktop\sherlock\test_data\tests\test.robot">
+<test id="s1-s2-t1" name="Test A">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.716" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.715" endtime="20211011 13:40:06.716"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.715" endtime="20211011 13:40:06.716"/>
+</kw>
+<kw name="Keyword 2" library="resourceA">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.717" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.717" endtime="20211011 13:40:06.717"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.716" endtime="20211011 13:40:06.717"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.716" endtime="20211011 13:40:06.717"/>
+</kw>
+<kw name="Keyword 4">
+<msg timestamp="20211011 13:40:06.717" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+    resourceA.Keyword 4
+    resourceB.Keyword 4</msg>
+<status status="FAIL" starttime="20211011 13:40:06.717" endtime="20211011 13:40:06.717"/>
+</kw>
+<status status="FAIL" starttime="20211011 13:40:06.715" endtime="20211011 13:40:06.718">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+    resourceA.Keyword 4
+    resourceB.Keyword 4</status>
+</test>
+<test id="s1-s2-t2" name="Test B">
+<kw name="Keyword 1" library="resourceA">
+<kw name="Log" library="BuiltIn">
+<arg>1</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20211011 13:40:06.721" level="INFO">1</msg>
+<status status="PASS" starttime="20211011 13:40:06.721" endtime="20211011 13:40:06.721"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.720" endtime="20211011 13:40:06.722"/>
+</kw>
+<kw name="Keyword 4">
+<msg timestamp="20211011 13:40:06.723" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+    resourceA.Keyword 4
+    resourceB.Keyword 4</msg>
+<status status="FAIL" starttime="20211011 13:40:06.723" endtime="20211011 13:40:06.723"/>
+</kw>
+<status status="FAIL" starttime="20211011 13:40:06.720" endtime="20211011 13:40:06.724">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+    resourceA.Keyword 4
+    resourceB.Keyword 4</status>
+</test>
+<test id="s1-s2-t3" name="Test C">
+<kw name="Python Keyword" library="MyPythonLibrary">
+<arg>a</arg>
+<status status="PASS" starttime="20211011 13:40:06.726" endtime="20211011 13:40:06.726"/>
+</kw>
+<status status="PASS" starttime="20211011 13:40:06.726" endtime="20211011 13:40:06.727"/>
+</test>
+<status status="FAIL" starttime="20211011 13:40:06.710" endtime="20211011 13:40:06.728"/>
+</suite>
+<status status="FAIL" starttime="20211011 13:40:06.654" endtime="20211011 13:40:06.730"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="2" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="2" fail="2" skip="0" id="s1" name="Tests">Tests</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1" name="Nested">Tests.Nested</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1-s1" name="Test">Tests.Nested.Test</stat>
+<stat pass="1" fail="2" skip="0" id="s1-s2" name="Test">Tests.Test</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20211011 13:40:06.685" level="ERROR">Error in file 'C:\Users\barte\Desktop\sherlock\test_data\tests\nested\test.robot' on line 3: Resource file 'idontexist.resource' does not exist.</msg>
+</errors>
+</robot>
