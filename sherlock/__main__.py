@@ -1,4 +1,5 @@
-from .run import run
+from sherlock import run_cli
 
 
-run()
+if __name__ == "__main__":
+    run_cli()

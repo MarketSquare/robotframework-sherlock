@@ -1,19 +1,14 @@
-import argparse
-import os
-from pathlib import Path
-from robot.api import TestSuiteBuilder, get_resource_model, ExecutionResult
-from robot.running.builder import ResourceFileBuilder
-from robot.libraries import STDLIBS
-from robot.utils import Importer
-from robot.running.userkeyword import UserLibrary
-from robot.running.testlibraries import TestLibrary
-from robot.running.arguments import EmbeddedArguments
 import ast
-from robot.libdocpkg.robotbuilder import KeywordDocBuilder, LibraryDocBuilder, ResourceDocBuilder
-from jinja2 import Template
+import os
 from itertools import chain
+from pathlib import Path
 
-from .file_utils import get_paths, ResultTree
+from robot.api import TestSuiteBuilder, get_resource_model, ExecutionResult
+from robot.libdocpkg.robotbuilder import LibraryDocBuilder
+from robot.running.arguments import EmbeddedArguments
+
+from sherlock.config import Config
+from sherlock.file_utils import get_paths
 
 
 def normalize_name(name):
@@ -147,35 +142,41 @@ class ResourceVisitor(ast.NodeVisitor):
             self.libraries[node.name] = node.args
 
 
-def run():
-    print("Sherlock")
-    resources = dict()
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, default=None)
-    parser.add_argument("--output_path", type=str, default=None)
-    config = parser.parse_args()
-    if config.path is not None:  # TODO either one of them should be present (mutually exclusive)
-        suite = TestSuiteBuilder().build(config.path)
-        root = config.path
-    elif config.output_path:
-        suite = ExecutionResult(config.output_path).suite
-        root = str(Path(config.output_path).parent)  # TODO if given xml file, should point to source dir
+class Sherlock:
+    def __init__(self):
+        self.config = Config()
 
+    def run(self):
+        self.log("Sherlock analysis of Robot Framework code:\n")
+        resources = dict()
+        root = self.config.path
+        self.log(f"Using {root.resolve()} as source repository")
 
-    #ns = Namespace()
-    paths = get_paths((root,))
-    for path in paths:
-        # resource = ResourceFileBuilder().build(path)
-        # user_library = UserLibrary(resource)
-        if path.suffix == ".py":
-            resources[str(path)] = Library(path)
+        if self.config.output_path:
+            suite = ExecutionResult(self.config.output_path).suite
+            self.log(f"Loaded {self.config.output_path.resolve()} output file")
         else:
-            resources[str(path)] = Resource(path)
-    visit_suite(suite, resources)
-    for path, resource in resources.items():
-        print(resource)
+            suite = TestSuiteBuilder().build(self.config.path)
 
-    # tree = ResultTree(Path(root)) # can be used later for html output format with tree
+        self.log("\n")
+
+        #ns = Namespace()
+        paths = get_paths((root,))
+        for path in paths:
+            # resource = ResourceFileBuilder().build(path)
+            # user_library = UserLibrary(resource)
+            if path.suffix == ".py":
+                resources[str(path)] = Library(path)
+            else:
+                resources[str(path)] = Resource(path)
+        visit_suite(suite, resources)
+        for path, resource in resources.items():
+            self.log(resource)
+
+        # tree = ResultTree(Path(root)) # can be used later for html output format with tree
+
+    def log(self, line):
+        print(line, file=self.config.log_output)
 
 
 def visit_suite(suite, resources):
