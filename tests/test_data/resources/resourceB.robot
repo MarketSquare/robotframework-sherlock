@@ -1,3 +1,3 @@
 *** Keywords ***
-Keyword 4
+Keyword4
     Log  4
