@@ -2,6 +2,7 @@
 Resource  ..${/}resources${/}resourceA.resource
 Resource  ..${/}resources${/}resourceB.robot  # keyword 4 redefined
 Library   ..${/}libs${/}MyPythonLibrary.py    test
+Library   ..${/}libs${/}KeywordFour.py  # keyword 4 redefined
 
 
 *** Test Cases ***
