@@ -46,5 +46,5 @@ setup(
         "dev": ["pytest", "black"],
         # "doc": ["sphinx", "sphinx_rtd_theme"],
     },
-    entry_points={"console_scripts": [f"{PACKAGE}={PACKAGE}.generate:generate"]},
+    entry_points={"console_scripts": [f"{PACKAGE}={PACKAGE}:run_cli"]},
 )
