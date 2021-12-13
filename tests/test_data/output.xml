@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 4.1.2 (Python 3.9.2 on win32)" generated="20211211 17:41:05.214" rpa="false" schemaversion="2">
+<robot generator="Robot 4.1.2 (Python 3.9.2 on win32)" generated="20211213 11:46:40.480" rpa="false" schemaversion="2">
 <suite id="s1" name="Tests" source="C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests">
 <suite id="s1-s1" name="Nested" source="C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests\nested">
 <suite id="s1-s1-s1" name="Test" source="C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests\nested\test.robot">
@@ -13,33 +13,68 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.511" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.511" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.511" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
 <kw name="Keyword 4" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>4</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">4</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.511" level="INFO">4</msg>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.511"/>
 </iter>
 <iter>
 <var name="${a}">1</var>
@@ -47,33 +82,68 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.527" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 4" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>4</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">4</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">4</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.527"/>
 </iter>
 <iter>
 <var name="${a}">2</var>
@@ -81,33 +151,68 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.527" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 4" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>4</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">4</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">4</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </iter>
 <iter>
 <var name="${a}">3</var>
@@ -115,33 +220,68 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.527" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 4" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>4</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">4</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">4</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </iter>
 <iter>
 <var name="${a}">4</var>
@@ -149,50 +289,85 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.527" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.527" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.527"/>
 </kw>
 <kw name="Keyword 4" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>4</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">4</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.543" level="INFO">4</msg>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.527" endtime="20211213 11:46:40.543"/>
 </iter>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.543"/>
 </for>
 <kw name="Internal_keyword">
 <kw name="Log" library="BuiltIn">
 <arg>Internal</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.245" level="INFO">Internal</msg>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<msg timestamp="20211213 11:46:40.543" level="INFO">Internal</msg>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.543"/>
 </test>
-<status status="PASS" starttime="20211211 17:41:05.230" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.543"/>
 </suite>
-<status status="PASS" starttime="20211211 17:41:05.230" endtime="20211211 17:41:05.245"/>
+<status status="PASS" starttime="20211213 11:46:40.511" endtime="20211213 11:46:40.543"/>
 </suite>
 <suite id="s1-s2" name="Test" source="C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests\test.robot">
 <test id="s1-s2-t1" name="Test A">
@@ -200,93 +375,128 @@
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.261" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<msg timestamp="20211213 11:46:40.543" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
 <kw name="Keyword 2" library="resourceA">
 <kw name="Keyword 3" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>3</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.261" level="INFO">3</msg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<msg timestamp="20211213 11:46:40.543" level="INFO">3</msg>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<kw name="No Operation" library="BuiltIn">
+<doc>Does absolutely nothing.</doc>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.543"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${condition}</var>
+<arg>${True}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20211213 11:46:40.558" level="INFO">${condition} = True</msg>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.558"/>
+</kw>
+<if>
+<branch type="IF" condition="${condition}">
+<if>
+<branch type="IF" condition="${condition}">
+<kw name="Should Be True" library="BuiltIn">
+<arg>${True}</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</branch>
+<branch type="ELSE IF" condition="False">
+<kw name="Should Be False">
+<arg>${False}</arg>
+<status status="NOT RUN" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</kw>
+<status status="NOT RUN" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</branch>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
+</if>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.558"/>
+</kw>
+<status status="PASS" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.558"/>
 </kw>
 <kw name="Keyword 4">
-<msg timestamp="20211211 17:41:05.261" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+<msg timestamp="20211213 11:46:40.558" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
     resourceA.Keyword 4
-    resourceB.Keyword 4</msg>
-<status status="FAIL" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+    resourceB.Keyword4</msg>
+<status status="FAIL" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="FAIL" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+<status status="FAIL" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.558">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
     resourceA.Keyword 4
-    resourceB.Keyword 4</status>
+    resourceB.Keyword4</status>
 </test>
 <test id="s1-s2-t2" name="Test B">
 <kw name="Keyword 1" library="resourceA">
 <kw name="Log" library="BuiltIn">
 <arg>1</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.261" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<msg timestamp="20211213 11:46:40.558" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
 <kw name="Keyword 4">
-<msg timestamp="20211211 17:41:05.261" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+<msg timestamp="20211213 11:46:40.558" level="FAIL">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
     resourceA.Keyword 4
-    resourceB.Keyword 4</msg>
-<status status="FAIL" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+    resourceB.Keyword4</msg>
+<status status="FAIL" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="FAIL" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
+<status status="FAIL" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558">Multiple keywords with name 'Keyword 4' found. Give the full name of the keyword you want to use:
     resourceA.Keyword 4
-    resourceB.Keyword 4</status>
+    resourceB.Keyword4</status>
 </test>
 <test id="s1-s2-t3" name="Test C">
 <kw name="Python Keyword" library="MyPythonLibrary">
 <arg>a</arg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </test>
 <test id="s1-s2-t4" name="Test Embedded">
 <kw name="Run Keyword With abcd" library="resourceA" sourcename="Run Keyword With ${variable}">
 <kw name="Log" library="BuiltIn">
 <arg>${variable}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.261" level="INFO">abcd</msg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<msg timestamp="20211213 11:46:40.558" level="INFO">abcd</msg>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
 <kw name="Run Keyword With 1" library="resourceA" sourcename="Run Keyword With ${variable}">
 <kw name="Log" library="BuiltIn">
 <arg>${variable}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.261" level="INFO">1</msg>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<msg timestamp="20211213 11:46:40.558" level="INFO">1</msg>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.261"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
 <kw name="run keyword with abc" library="resourceA" sourcename="Run Keyword With ${variable}">
 <kw name="Log" library="BuiltIn">
 <arg>${variable}</arg>
 <doc>Logs the given message with the given level.</doc>
-<msg timestamp="20211211 17:41:05.277" level="INFO">abc</msg>
-<status status="PASS" starttime="20211211 17:41:05.277" endtime="20211211 17:41:05.277"/>
+<msg timestamp="20211213 11:46:40.558" level="INFO">abc</msg>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.277" endtime="20211211 17:41:05.277"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </kw>
-<status status="PASS" starttime="20211211 17:41:05.261" endtime="20211211 17:41:05.277"/>
+<status status="PASS" starttime="20211213 11:46:40.558" endtime="20211213 11:46:40.558"/>
 </test>
-<status status="FAIL" starttime="20211211 17:41:05.245" endtime="20211211 17:41:05.277"/>
+<status status="FAIL" starttime="20211213 11:46:40.543" endtime="20211213 11:46:40.558"/>
 </suite>
-<status status="FAIL" starttime="20211211 17:41:05.214" endtime="20211211 17:41:05.277"/>
+<status status="FAIL" starttime="20211213 11:46:40.480" endtime="20211213 11:46:40.574"/>
 </suite>
 <statistics>
 <total>
@@ -302,6 +512,6 @@
 </suite>
 </statistics>
 <errors>
-<msg timestamp="20211211 17:41:05.230" level="ERROR">Error in file 'C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests\nested\test.robot' on line 3: Resource file 'idontexist.resource' does not exist.</msg>
+<msg timestamp="20211213 11:46:40.511" level="ERROR">Error in file 'C:\Users\barte\Desktop\robotframework-sherlock\tests\test_data\tests\nested\test.robot' on line 3: Resource file 'idontexist.resource' does not exist.</msg>
 </errors>
 </robot>
