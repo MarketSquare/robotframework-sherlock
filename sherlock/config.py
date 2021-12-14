@@ -11,33 +11,25 @@ class Config:
         self.parse_opts(parser)
 
     def _create_parser(self):
-        defaults = {
-            "path": self.path,
-            "output_path": self.output_path
-        }
+        defaults = {"path": self.path, "output_path": self.output_path}
 
         parser = argparse.ArgumentParser(
             prog="sherlock",
-            description="Code complexity analyser for Robot Framework.\n"
+            description="Code complexity analyser for Robot Framework.\n",
         )
 
-        parser.add_argument(
-            "path",
-            metavar="SOURCE",
-            type=Path,
-            help="Path to source code"
-        )
+        parser.add_argument("path", metavar="SOURCE", type=Path, help="Path to source code")
         parser.add_argument(
             "--output-path",
             default=self.output_path,
             type=Path,
-            help="Path to Robot Framework output file"
+            help="Path to Robot Framework output file",
         )
         parser.add_argument(
             "--log-output",
             type=argparse.FileType("w"),
             default=self.log_output,
-            help="Path to output log"
+            help="Path to output log",
         )
         parser.set_defaults(**defaults)
         return parser

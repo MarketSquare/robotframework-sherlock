@@ -35,7 +35,7 @@ class KeywordStats:
 
 class ResourceVisitor(ast.NodeVisitor):
     def __init__(self):
-        self.normal_keywords = NormalizedDict(ignore='_')
+        self.normal_keywords = NormalizedDict(ignore="_")
         self.embedded_keywords = dict()
         self.resources = set()
         self.libraries = dict()
@@ -85,7 +85,7 @@ class KeywordStore:
 
 class KeywordLibraryStore(KeywordStore):
     def __init__(self, test_library):
-        normal = NormalizedDict(ignore='_')
+        normal = NormalizedDict(ignore="_")
         for kw in test_library.handlers._normal:
             normal[kw] = KeywordStats(kw)
         embedded = {handler.name: (KeywordStats(handler.name, handler)) for handler in test_library.handlers._embedded}
@@ -110,7 +110,7 @@ class KeywordResourceStore(KeywordStore):
 
 class Library:
     def __init__(self, path):
-        self.type = 'Library'
+        self.type = "Library"
         self.path = path
         self.keywords = None
         self.loaded = False
@@ -145,7 +145,7 @@ class Library:
 
 class Resource:
     def __init__(self, path: Path):
-        self.type = 'Resource'
+        self.type = "Resource"
         self.path = str(path)
         self.directory = str(path.parent)
         self.resources = dict()
@@ -157,7 +157,7 @@ class Resource:
         visitor.visit(model)
         self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords)
         # set them from --variables and such
-        variables = {'${/}': os.path.sep}
+        variables = {"${/}": os.path.sep}
         for resource in visitor.resources:
             for var, value in variables.items():
                 resource = resource.replace(var, value)
@@ -195,7 +195,7 @@ class Resource:
 
 class Directory:
     def __init__(self, path, gitignore=None):
-        self.type = 'Directory'
+        self.type = "Directory"
         self.path = path
         self.children = []
         self.get_childs(gitignore)
@@ -232,7 +232,7 @@ class Directory:
 
     def get_resources(self):
         for resource in self.children:
-            if resource.type == 'Directory':
+            if resource.type == "Directory":
                 yield from resource.get_resources()
             else:
                 yield resource.get_resources()
@@ -241,7 +241,7 @@ class Directory:
         s = textwrap.indent(str(self), indent) + "\n"
         indent += "    "
         for resource in self.children:
-            if resource.type == 'Directory':
+            if resource.type == "Directory":
                 s += resource.log_tree(indent)
             else:
                 s += textwrap.indent(str(resource), indent) + "\n"
