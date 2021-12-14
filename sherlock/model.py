@@ -1,5 +1,6 @@
 import ast
 import os
+import textwrap
 from pathlib import Path
 
 from robot.api import get_resource_model
@@ -8,6 +9,7 @@ from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict
 
 from sherlock.complexity import ComplexityChecker
+from sherlock.file_utils import get_gitignore, INCLUDE_EXT
 
 
 class KeywordStats:
@@ -108,6 +110,7 @@ class KeywordResourceStore(KeywordStore):
 
 class Library:
     def __init__(self, path):
+        self.type = 'Library'
         self.path = path
         self.keywords = None
         self.loaded = False
@@ -126,6 +129,9 @@ class Library:
             return  # TODO lib not init
         return self.keywords.find_kw(name)
 
+    def get_resources(self):
+        return str(self.path), self
+
     def __str__(self):
         s = f"Library: {self.path}\n"
         if self.keywords:
@@ -139,6 +145,7 @@ class Library:
 
 class Resource:
     def __init__(self, path: Path):
+        self.type = 'Resource'
         self.path = str(path)
         self.directory = str(path.parent)
         self.resources = dict()
@@ -174,6 +181,9 @@ class Resource:
                 found += resources[lib].search(name, resources)
         return found
 
+    def get_resources(self):
+        return str(self.path), self
+
     def __str__(self):
         s = f"File: {self.path}\n"
         if self.keywords:
@@ -181,3 +191,61 @@ class Resource:
             for kw in self.keywords:
                 s += "    " + str(kw)
         return s
+
+
+class Directory:
+    def __init__(self, path, gitignore=None):
+        self.type = 'Directory'
+        self.path = path
+        self.children = []
+        self.get_childs(gitignore)
+        # TODO handle __init__.robot here
+
+    @classmethod
+    def root(cls, path):
+        path = Path(path).resolve()
+        gitignore = get_gitignore(path)
+        directory = cls(path, gitignore)
+
+        # TODO make separate tree for BuiltIn stuff
+        built_in = Library("BuiltIn")
+        built_in.load_library()
+        built_in.filter_not_used = True
+        directory.children.insert(0, built_in)
+        return directory
+
+    def get_childs(self, gitignore):
+        for child in self.path.iterdir():
+            gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
+            # FIXME __pycache__ is still matched
+            if gitignore is not None and gitignore.match_file(gitignore_pattern):
+                continue
+            if child.is_dir():
+                self.children.append(Directory(child, gitignore))
+            elif child.is_file():
+                if child.suffix not in INCLUDE_EXT:
+                    continue
+                if child.suffix == ".py":  # TODO better mapping
+                    self.children.append(Library(child))
+                else:
+                    self.children.append(Resource(child))
+
+    def get_resources(self):
+        for resource in self.children:
+            if resource.type == 'Directory':
+                yield from resource.get_resources()
+            else:
+                yield resource.get_resources()
+
+    def log_tree(self, indent=""):
+        s = textwrap.indent(str(self), indent) + "\n"
+        indent += "    "
+        for resource in self.children:
+            if resource.type == 'Directory':
+                s += resource.log_tree(indent)
+            else:
+                s += textwrap.indent(str(resource), indent) + "\n"
+        return s
+
+    def __str__(self):
+        return str(self.path.name)

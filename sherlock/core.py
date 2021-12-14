@@ -3,10 +3,10 @@ from pathlib import Path
 
 from robot.api import TestSuiteBuilder, ExecutionResult
 from robot.model.keyword import Keyword
+from robot.variables import Variables
 
 from sherlock.config import Config
-from sherlock.file_utils import get_paths
-from sherlock.model import Library, Resource
+from sherlock.model import Library, Resource, Directory
 
 
 def normalize_name(name):
@@ -19,6 +19,9 @@ class Sherlock:
     def __init__(self):
         self.config = Config()
         self.resources = dict()
+        self.directory = None
+        self.variables = Variables()
+        self.variables["${/}"] = os.path.sep
 
     def run(self):
         self.log("Sherlock analysis of Robot Framework code:\n")
@@ -35,38 +38,38 @@ class Sherlock:
 
         self.visit_suite(suite)
 
-        for path, resource in self.resources.items():
-            self.log(resource)
+        self.log(self.directory.log_tree())
 
     def log(self, line):
         print(line, file=self.config.log_output)
     
     def map_resources(self, root):
-        built_in = Library("BuiltIn")
-        built_in.load_library()
-        built_in.filter_not_used = True
-        self.resources["BuiltIn"] = built_in
+        # TODO if provided a file it should still work (ie take parent of it)
+        self.directory = Directory.root(root)
+        self.resources = {path: resource for path, resource in self.directory.get_resources()}
 
-        paths = get_paths((root,))
-        for path in paths:
-            if path.suffix == ".py":
-                self.resources[str(path)] = Library(path)
-            else:
-                self.resources[str(path)] = Resource(path)
+    def get_local_variables(self, suite):
+        variables = Variables()
+        variables.update(self.variables)
+
+        for variable in suite.resource.variables:
+            variables[variable.name] = variable.value[0]  # TODO scalars
+        variables["${CURDIR}"] = Path(suite.resource.source).parent
+
+        return variables
 
     def visit_suite(self, suite):
         search_in = set()
         errors = set()
         # set them from --variables and such
-        variables = {'${/}': os.path.sep}
         if hasattr(suite, 'resource'):
             search_in.add(suite.resource.source)
             for imported in suite.resource.imports:
                 if imported.type == 'Variables':
                     continue
                 name = imported.name
-                for var, value in variables.items():
-                    name = name.replace(var, value)
+                variables = self.get_local_variables(suite)
+                name = variables.replace_string(name, ignore_errors=True)  # TODO dont ignore errors
                 # TODO: replace with better search taken from RF, check python path and such
                 name = str(Path(imported.directory, name).resolve())
                 if name not in self.resources:
@@ -91,6 +94,7 @@ class Sherlock:
     def visit_keyword(self, kw, search_in, errors):
         if isinstance(kw, Keyword):
             name = kw.kwname if hasattr(kw, 'kwname') else kw.name
+            # TODO can match by resource name if executed with output.xml (resourceA.Keyword 3)
             found = []
             for resource in search_in:
                 # if resource in resources:
