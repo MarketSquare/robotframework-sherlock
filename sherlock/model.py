@@ -7,15 +7,28 @@ from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict
 
+from sherlock.complexity import ComplexityChecker
+
 
 class KeywordStats:
     def __init__(self, name, node=None):
         self.name = name
         self.used = 0
         self.node = node
+        self.complexity = self.get_complexity()
 
     def __str__(self):
-        return f"{self.name} | Used: {self.used}\n"
+        s = f"{self.name} | Used: {self.used}"
+        if self.complexity:
+            s += f" | Complexity: {self.complexity}"
+        return s + "\n"
+
+    def get_complexity(self):
+        if not self.node:
+            return None
+        checker = ComplexityChecker()
+        checker.visit(self.node)
+        return checker.complexity()
 
 
 class ResourceVisitor(ast.NodeVisitor):
