@@ -1,6 +1,6 @@
 *** Settings ***
 Resource    ..${/}..${/}resources${/}resourceA.resource
-Resource    idontexist.resource
+Resource    idontexist${B}.resource
 Library     ..${/}..${/}libs${/}MyPythonLibrary.py  test  # imported but not used
 
 *** Variables ***
