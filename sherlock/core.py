@@ -6,7 +6,9 @@ from robot.model.keyword import Keyword
 from robot.variables import Variables
 
 from sherlock.config import Config
-from sherlock.model import Library, Resource, Directory
+from sherlock.model import Directory
+from sherlock.report.html import html_report
+from sherlock.report.print import print_report
 
 
 def normalize_name(name):
@@ -38,10 +40,16 @@ class Sherlock:
 
         self.visit_suite(suite)
 
-        self.log(self.directory.log_tree())
+        self.report()
 
     def log(self, line):
         print(line, file=self.config.log_output)
+
+    def report(self):
+        if "print" in self.config.report:
+            print_report(self.directory, self.config.log_output)
+        if "html" in self.config.report:
+            html_report(self.directory, self.config.root)
 
     def map_resources(self, root):
         # TODO if provided a file it should still work (ie take parent of it)

@@ -146,7 +146,7 @@ class Library:
 class Resource:
     def __init__(self, path: Path):
         self.type = "Resource"
-        self.path = str(path)
+        self.path = path
         self.directory = str(path.parent)
         self.resources = dict()
         self.imports = set()
@@ -236,16 +236,6 @@ class Directory:
                 yield from resource.get_resources()
             else:
                 yield resource.get_resources()
-
-    def log_tree(self, indent=""):
-        s = textwrap.indent(str(self), indent) + "\n"
-        indent += "    "
-        for resource in self.children:
-            if resource.type == "Directory":
-                s += resource.log_tree(indent)
-            else:
-                s += textwrap.indent(str(resource), indent) + "\n"
-        return s
 
     def __str__(self):
         return str(self.path.name)
