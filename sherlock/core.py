@@ -6,13 +6,15 @@ from robot.model.keyword import Keyword
 from robot.variables import Variables
 
 from sherlock.config import Config
-from sherlock.model import Library, Resource, Directory
+from sherlock.model import Directory
+from sherlock.report.html import html_report
+from sherlock.report.print import print_report
 
 
 def normalize_name(name):
     if not name:
-        return ''
-    return name.lower().replace(' ', '').replace('_', '')  # TODO: check how RF normalizes, is that all?
+        return ""
+    return name.lower().replace(" ", "").replace("_", "")  # TODO: check how RF normalizes, is that all?
 
 
 class Sherlock:
@@ -38,11 +40,17 @@ class Sherlock:
 
         self.visit_suite(suite)
 
-        self.log(self.directory.log_tree())
+        self.report()
 
     def log(self, line):
         print(line, file=self.config.log_output)
-    
+
+    def report(self):
+        if "print" in self.config.report:
+            print_report(self.directory, self.config.log_output)
+        if "html" in self.config.report:
+            html_report(self.directory, self.config.root)
+
     def map_resources(self, root):
         # TODO if provided a file it should still work (ie take parent of it)
         self.directory = Directory.root(root)
@@ -62,10 +70,10 @@ class Sherlock:
         search_in = set()
         errors = set()
         # set them from --variables and such
-        if hasattr(suite, 'resource'):
+        if hasattr(suite, "resource"):
             search_in.add(suite.resource.source)
             for imported in suite.resource.imports:
-                if imported.type == 'Variables':
+                if imported.type == "Variables":
                     continue
                 name = imported.name
                 variables = self.get_local_variables(suite)
@@ -74,7 +82,7 @@ class Sherlock:
                 name = str(Path(imported.directory, name).resolve())
                 if name not in self.resources:
                     continue
-                if imported.type == 'Library':
+                if imported.type == "Library":
                     self.resources[name].load_library(imported.args)
                 # search_in.add(name)
         else:
@@ -93,7 +101,7 @@ class Sherlock:
 
     def visit_keyword(self, kw, search_in, errors):
         if isinstance(kw, Keyword):
-            name = kw.kwname if hasattr(kw, 'kwname') else kw.name
+            name = kw.kwname if hasattr(kw, "kwname") else kw.name
             # TODO can match by resource name if executed with output.xml (resourceA.Keyword 3)
             found = []
             for resource in search_in:

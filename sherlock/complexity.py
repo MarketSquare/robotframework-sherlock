@@ -19,7 +19,7 @@ class ComplexityChecker(ModelVisitor):
         self.nodes[node2] = []
 
     def complexity(self):
-        """ mccabe V-E+2 """
+        """mccabe V-E+2"""
         edges = sum(len(n) for n in self.nodes.values())
         nodes = len(self.nodes)
         return edges - nodes + 2
@@ -42,12 +42,12 @@ class ComplexityChecker(ModelVisitor):
         name = f"KeywordCall {node.lineno}"
         self.append_path_node(name)
 
-    def visit_For(self, node): # noqa
+    def visit_For(self, node):  # noqa
         name = f"FOR {node.lineno}"
         path_node = self.append_path_node(name)
         self._parse_subgraph(node, path_node)
 
-    def visit_If(self, node): # noqa
+    def visit_If(self, node):  # noqa
         name = f"IF {node.lineno}"
         path_node = self.append_path_node(name)
         self._parse_subgraph(node, path_node)

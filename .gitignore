@@ -132,3 +132,6 @@ dmypy.json
 .idea/
 
 actual/
+
+sherlock.html
+sherlock.log
