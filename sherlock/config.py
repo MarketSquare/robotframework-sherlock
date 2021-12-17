@@ -1,11 +1,11 @@
 import argparse
-import sys
 from typing import List
 from pathlib import Path
 
 import toml
 
 from sherlock.file_utils import find_project_root, find_file_in_project_root
+from sherlock.exceptions import SherlockFatalError
 
 
 class CommaSeparated(argparse.Action):
@@ -14,13 +14,14 @@ class CommaSeparated(argparse.Action):
 
 
 class Config:
-    def __init__(self):
+    def __init__(self, from_cli=True):
         self.path = None
         self.output_path = None
         self.log_output = None
         self.report: List[str] = ["print"]
         self.root = None
-        self.parse_cli()
+        if from_cli:
+            self.parse_cli()
 
     def parse_cli(self):
         parser = self._create_parser()
@@ -42,7 +43,7 @@ class Config:
         parser = argparse.ArgumentParser(
             prog="sherlock",
             description="Code complexity analyser for Robot Framework.\n",
-            argument_default=argparse.SUPPRESS
+            argument_default=argparse.SUPPRESS,
         )
 
         parser.add_argument("path", metavar="SOURCE", default=self.path, type=Path, help="Path to source code")
@@ -76,7 +77,7 @@ class Config:
         if "config" in parsed_args:
             config_path = parsed_args.config
             if not Path(config_path).is_file():
-                raise ValueError(f"Config '{config_path}' does not exist") from None  # TODO
+                raise SherlockFatalError(f"Configuration file '{config_path}' does not exist") from None
         else:
             config_path = find_file_in_project_root("pyproject.toml", self.root)
             if not config_path.is_file():
@@ -93,7 +94,7 @@ class TomlConfigParser:
         try:
             config = toml.load(self.config_path)
         except toml.TomlDecodeError as err:
-            raise ValueError(f"Failed to decode {self.config_path}: {err}") from None  # TODO internal exception
+            raise SherlockFatalError(f"Failed to decode {self.config_path}: {err}") from None
         return config.get("tool", {}).get("sherlock", {})
 
     def get_config(self):
@@ -107,11 +108,13 @@ class TomlConfigParser:
             if key == "log_output":
                 read_config[key] = argparse.FileType("w")(value)
             elif key == "report":
-                read_config[key] = value.split(",")
+                read_config[key] = value.split(",") if isinstance(value, str) else value
             elif key == "config":
-                raise ValueError("Nesting configuration files is not allowed")  # TODO tests
+                raise SherlockFatalError("Nesting configuration files is not allowed")
+            elif key == "output_path":
+                read_config[key] = Path(value)
             elif key in self.look_up:
                 read_config[key] = value
             else:
-                raise ValueError(f"Option '{key}' is not supported in pyproject.toml configuration file.")  # TODO tests, exception
+                raise SherlockFatalError(f"Option '{key}' is not supported in configuration file")
         return read_config

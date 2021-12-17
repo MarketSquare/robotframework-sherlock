@@ -1,0 +1,2 @@
+class SherlockFatalError(ValueError):
+    pass

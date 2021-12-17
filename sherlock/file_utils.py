@@ -40,10 +40,7 @@ def find_project_root(paths) -> Path:
     )
 
     for directory in (common_base, *common_base.parents):
-        if (
-                (directory / ".git").exists()
-                or (directory / "pyproject.toml").is_file()
-        ):
+        if (directory / ".git").exists() or (directory / "pyproject.toml").is_file():
             return directory
     return directory
 

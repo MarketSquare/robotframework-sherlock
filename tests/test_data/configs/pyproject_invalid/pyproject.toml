@@ -1,5 +1,5 @@
 [tool.sherlock]
 output-path = "output.xml"
-log_output = "sherlock.log"
+log_output = sherlock.log
 report = "print,html"
 path = ["file1.robot", "dir/"]

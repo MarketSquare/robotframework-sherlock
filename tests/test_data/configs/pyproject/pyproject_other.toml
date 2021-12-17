@@ -1,0 +1,3 @@
+[tool.sherlock]
+output-path = "output3.xml"
+path = ["file1.robot", "dir/"]
