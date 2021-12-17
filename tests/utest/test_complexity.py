@@ -2,14 +2,14 @@ import pytest
 from robot.api import get_model
 
 from sherlock.model import KeywordStats
-from .complexity_models import model_1complexity, model_2complexity, model_3complexity
+from .complexity_models import model_1complexity, model_3complexity, model_5complexity
 
 
 class TestComplexity:
     @pytest.mark.parametrize("string_model, complexity", [
         (model_1complexity, 1),
-        (model_2complexity, 3),
-        (model_3complexity, 5)
+        (model_3complexity, 3),
+        (model_5complexity, 5)
     ])
     def test_complexity(self, string_model, complexity):
         model = get_model(string_model)

@@ -10,7 +10,7 @@ Keyword
 
 """
 
-model_2complexity = """
+model_3complexity = """
 *** Keywords ***
 Keyword
     Keyword Call
@@ -27,7 +27,7 @@ Keyword
 
 """
 
-model_3complexity = """
+model_5complexity = """
 *** Keywords ***
 Keyword
     Keyword Call
