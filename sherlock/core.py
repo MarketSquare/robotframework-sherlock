@@ -11,12 +11,6 @@ from sherlock.report.html import html_report
 from sherlock.report.print import print_report
 
 
-def normalize_name(name):
-    if not name:
-        return ""
-    return name.lower().replace(" ", "").replace("_", "")  # TODO: check how RF normalizes, is that all?
-
-
 class Sherlock:
     def __init__(self):
         self.config = Config()

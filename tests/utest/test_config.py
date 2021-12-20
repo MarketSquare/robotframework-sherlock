@@ -1,0 +1,142 @@
+from pathlib import Path
+import io
+import sys
+import os
+import contextlib
+from unittest.mock import patch
+
+import pytest
+
+from sherlock.config import TomlConfigParser, Config
+from sherlock.exceptions import SherlockFatalError
+
+
+@pytest.fixture
+def path_to_test_data():
+    return Path(Path(__file__).parent.parent, "test_data")
+
+
+@contextlib.contextmanager
+def working_directory(path):
+    """Changes working directory and returns to previous on exit"""
+    prev_cwd = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
+
+
+class TestConfig:
+    def test_load_args_from_cli(self):
+        with patch.object(
+            sys,
+            "argv",
+            "sherlock --output-path output.xml --log-output sherlock.log --report html path/to/directory".split(),
+        ):
+            config = Config()
+            assert config.path == Path("path/to/directory")
+            assert config.output_path == Path("output.xml")
+            assert isinstance(config.log_output, io.TextIOWrapper)
+            assert config.report == ["html"]
+
+    def test_load_args_from_cli_no_pyproject(self):
+        with working_directory(Path.home()), patch.object(
+            sys,
+            "argv",
+            "sherlock --output-path output.xml --log-output sherlock.log --report html path/to/directory".split(),
+        ):
+            config = Config()
+            assert config.path == Path("path/to/directory")
+            assert config.output_path == Path("output.xml")
+            assert isinstance(config.log_output, io.TextIOWrapper)
+            assert config.report == ["html"]
+
+    def test_load_args_from_cli_overwrite_config(self, path_to_test_data):
+        config_dir = path_to_test_data / "configs" / "pyproject"
+        with working_directory(config_dir), patch.object(
+            sys, "argv", "sherlock --output-path output_diff.xml path/to/directory".split()
+        ):
+            config = Config()
+            assert config.path == Path("path/to/directory")
+            assert config.output_path == Path("output_diff.xml")
+            assert isinstance(config.log_output, io.TextIOWrapper)
+            assert config.report == ["print", "html"]
+
+    def test_load_args_from_cli_config_option(self, path_to_test_data):
+        config_dir = path_to_test_data / "configs" / "pyproject"
+        with working_directory(config_dir), patch.object(
+            sys, "argv", "sherlock --config pyproject_other.toml path".split()
+        ):
+            config = Config()
+            assert config.path == Path("path")
+            assert config.output_path == Path("output3.xml")
+            assert config.log_output is None
+            assert config.report == ["print"]
+
+    def test_load_args_from_config_missing_file(self):
+        with patch.object(sys, "argv", "sherlock --config idontexist.toml path".split()), pytest.raises(
+            SherlockFatalError
+        ) as err:
+            Config()
+        assert "Configuration file 'idontexist.toml' does not exist" in str(err)
+
+
+class TestTomlParser:
+    def test_read_toml_data(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject" / "pyproject.toml"
+        config = TomlConfigParser(config_path=config_path, look_up={}).read_from_file()
+        assert config and isinstance(config, dict)
+
+    def test_read_toml_data_empty_pyproject(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "empty_pyproject" / "pyproject.toml"
+        config = TomlConfigParser(config_path=config_path, look_up={}).read_from_file()
+        assert not config and isinstance(config, dict)
+
+    def test_read_toml_data_no_sherlock_section(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "no_sherlock_section_pyproject" / "pyproject.toml"
+        config = TomlConfigParser(config_path=config_path, look_up={}).read_from_file()
+        assert not config and isinstance(config, dict)
+
+    def test_get_config(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        config = TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert isinstance(config["log_output"], io.TextIOWrapper)
+        config["log_output"] = None
+        assert config == {
+            "output_path": Path("output.xml"),
+            "log_output": None,
+            "report": ["print", "html"],
+            "path": ["file1.robot", "dir/"],
+        }
+
+    def test_get_config_empty(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "empty_pyproject" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        config = TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert not config and isinstance(config, dict)
+
+    def test_get_config_missing_key(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject_missing_key" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        with pytest.raises(SherlockFatalError) as err:
+            TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert "Option 'some_key' is not supported in configuration file" in str(err)
+
+    def test_get_config_nested_configuration(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject_nested_config" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        with pytest.raises(SherlockFatalError) as err:
+            TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert "Nesting configuration files is not allowed" in str(err)
+
+    def test_get_config_invalid_toml(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject_invalid" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        with pytest.raises(SherlockFatalError) as err:
+            TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert (
+            rf"Failed to decode {config_path}: This float doesn't have a leading digit (line 3 column 1 char 43)"
+            in err.value.args[0]
+        )
