@@ -7,15 +7,15 @@ from robot.variables import Variables
 
 from sherlock.config import Config
 from sherlock.model import Directory
-from sherlock.report.html import html_report
-from sherlock.report.print import print_report
+from sherlock.report import html_report, print_report, json_report
 
 
 class Sherlock:
-    def __init__(self):
-        self.config = Config()
+    def __init__(self, config=None):
+        self.config = Config() if config is None else config
         self.resources = dict()
         self.directory = None
+        self.from_output = bool(self.config.output_path)
         self.variables = Variables()
         self.variables["${/}"] = os.path.sep
 
@@ -24,7 +24,7 @@ class Sherlock:
         root = self.config.path
         self.log(f"Using {root.resolve()} as source repository")
 
-        if self.config.output_path:
+        if self.from_output:
             suite = ExecutionResult(self.config.output_path).suite
             self.log(f"Loaded {self.config.output_path.resolve()} output file")
         else:
@@ -44,6 +44,8 @@ class Sherlock:
             print_report(self.directory, self.config.log_output)
         if "html" in self.config.report:
             html_report(self.directory, self.config.root)
+        if "json" in self.config.report:
+            json_report(self.directory, self.config.root)
 
     def map_resources(self, root):
         # TODO if provided a file it should still work (ie take parent of it)
@@ -63,7 +65,7 @@ class Sherlock:
     def visit_suite(self, suite):
         search_in = set()
         errors = set()
-        # set them from --variables and such
+        # TODO set them from --variables and such
         if hasattr(suite, "resource"):
             search_in.add(suite.resource.source)
             for imported in suite.resource.imports:
@@ -95,7 +97,7 @@ class Sherlock:
 
     def visit_keyword(self, kw, search_in, errors):
         if isinstance(kw, Keyword):
-            name = kw.kwname if hasattr(kw, "kwname") else kw.name
+            name = kw.kwname if self.from_output else kw.name
             # TODO can match by resource name if executed with output.xml (resourceA.Keyword 3)
             found = []
             for resource in search_in:
