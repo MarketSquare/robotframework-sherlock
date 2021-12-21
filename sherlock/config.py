@@ -19,7 +19,7 @@ class Config:
         self.output_path = None
         self.log_output = None
         self.report: List[str] = ["print"]
-        self.root = None
+        self.root = Path.cwd()
         if from_cli:
             self.parse_cli()
 
