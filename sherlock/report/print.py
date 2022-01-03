@@ -11,5 +11,6 @@ def log_directory(directory, log_handle, indent=""):
             print(textwrap.indent(str(resource), indent) + "\n", file=log_handle)
 
 
-def print_report(directory, log_handle):
+def print_report(directory, name, log_handle):
+    print(name)
     log_directory(directory, log_handle)

@@ -2,6 +2,8 @@ import ast
 import os
 import textwrap
 from pathlib import Path
+from typing import Optional
+from pathspec import PathSpec
 
 from robot.api import get_resource_model
 from robot.running.arguments import EmbeddedArguments
@@ -112,9 +114,11 @@ class Library:
     def __init__(self, path):
         self.type = "Library"
         self.path = path
+        self.name = str(path)
         self.keywords = None
         self.loaded = False
         self.filter_not_used = False
+        self.builtin = False
 
     def load_library(self, args=None):
         if self.keywords:
@@ -147,6 +151,7 @@ class Resource:
     def __init__(self, path: Path):
         self.type = "Resource"
         self.path = path
+        self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
         self.resources = dict()
         self.imports = set()
@@ -193,49 +198,43 @@ class Resource:
         return s
 
 
-class Directory:
-    def __init__(self, path, gitignore=None):
-        self.type = "Directory"
-        self.path = path
+class Tree:
+    def __init__(self, name):
+        self.name = name
+        self.type = "Tree"
         self.children = []
-        self.get_childs(gitignore)
-        # TODO handle __init__.robot here
 
     @classmethod
-    def root(cls, path):
-        path = Path(path).resolve()
-        gitignore = get_gitignore(path)
-        directory = cls(path, gitignore)
+    def from_directory(cls, path: Path, root: bool = False, gitignore: Optional[PathSpec] = None):
+        tree = cls(str(path.name))
 
-        # TODO make separate tree for BuiltIn stuff
-        built_in = Library("BuiltIn")
-        built_in.load_library()
-        built_in.filter_not_used = True
-        directory.children.insert(0, built_in)
-        return directory
-
-    def get_childs(self, gitignore):
-        for child in self.path.iterdir():
-            gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
-            # FIXME __pycache__ is still matched
-            if gitignore is not None and gitignore.match_file(gitignore_pattern):
-                continue
-            if child.is_dir():
-                self.children.append(Directory(child, gitignore))
-            elif child.is_file():
-                if child.suffix not in INCLUDE_EXT:
+        if root:
+            path = Path(path).resolve()
+            gitignore = get_gitignore(path)
+            tree.children.append(cls.from_directory(path=path, gitignore=gitignore))
+        else:
+            for child in path.iterdir():
+                gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
+                # FIXME __pycache__ is still matched
+                if gitignore is not None and gitignore.match_file(gitignore_pattern):
                     continue
-                if child.suffix == ".py":  # TODO better mapping
-                    self.children.append(Library(child))
-                else:
-                    self.children.append(Resource(child))
+                if child.is_dir():
+                    tree.children.append(cls.from_directory(path=child, gitignore=gitignore))
+                elif child.is_file():
+                    if child.suffix not in INCLUDE_EXT:
+                        continue
+                    if child.suffix == ".py":  # TODO better mapping
+                        tree.children.append(Library(child))
+                    else:
+                        tree.children.append(Resource(child))
+        return tree
 
     def get_resources(self):
         for resource in self.children:
-            if resource.type == "Directory":
+            if resource.type == "Tree":
                 yield from resource.get_resources()
             else:
                 yield resource.get_resources()
 
     def __str__(self):
-        return str(self.path.name)
+        return self.name

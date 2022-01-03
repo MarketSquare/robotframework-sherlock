@@ -16,8 +16,7 @@ class HtmlResultModel:
     def __init__(self, element_id, model):
         self.element_id = element_id
         self.type = model.type.upper()
-        self.name = model.path.name if isinstance(model.path, Path) else str(model.path)
-        self.path = str(model.path)
+        self.name = model.name
         self.show = "BuiltIn" not in self.name
         self.children = []
         self.keywords = []
@@ -42,9 +41,9 @@ class HtmlResultModel:
             self.children.append(HtmlResultModel(new_id, child))
 
 
-def html_report(directory, output_dir):
+def html_report(directory, name, output_dir):
     result = HtmlResultModel("d0", directory)
     with open(Path(__file__).parent / "html.template") as f:
         template = Template(f.read()).render(tree=[result])
-    with open(output_dir / "sherlock.html", "w") as f:
+    with open(output_dir / f"sherlock_{name}.html", "w") as f:
         f.write(template)

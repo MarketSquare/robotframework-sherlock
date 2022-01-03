@@ -1,20 +1,22 @@
 import os
 from pathlib import Path
+from typing import Optional, List
 
 from robot.api import TestSuiteBuilder, ExecutionResult
 from robot.model.keyword import Keyword
 from robot.variables import Variables
 
-from sherlock.config import Config
-from sherlock.model import Directory
+from sherlock.config import Config, BUILT_IN
+from sherlock.model import Tree, Library, Resource
 from sherlock.report import html_report, print_report, json_report
 
 
 class Sherlock:
-    def __init__(self, config=None):
+    def __init__(self, config: Optional[Config] = None):
         self.config = Config() if config is None else config
         self.resources = dict()
         self.directory = None
+        self.packages: List[Tree] = []
         self.from_output = bool(self.config.output_path)
         self.variables = Variables()
         self.variables["${/}"] = os.path.sep
@@ -30,27 +32,53 @@ class Sherlock:
         else:
             suite = TestSuiteBuilder().build(self.config.path)
 
-        self.map_resources(root)
+        tree = self.map_resources_for_path(root)
+        self.packages.append(tree)
+        self.packages.append(self.create_builtin_tree())
+        self.packages.extend(self.map_resources())
 
         self.visit_suite(suite)
 
         self.report()
 
-    def log(self, line):
+    def log(self, line: str):
         print(line, file=self.config.log_output)
 
     def report(self):
-        if "print" in self.config.report:
-            print_report(self.directory, self.config.log_output)
-        if "html" in self.config.report:
-            html_report(self.directory, self.config.root)
-        if "json" in self.config.report:
-            json_report(self.directory, self.config.root)
+        for tree in self.packages:
+            if not self.config.include_builtin and tree.name == BUILT_IN:
+                continue
+            if "print" in self.config.report:
+                print_report(tree, tree.name, self.config.log_output)
+            if "html" in self.config.report:
+                html_report(tree, tree.name, self.config.root)
+            if "json" in self.config.report:
+                json_report(tree, tree.name, self.config.root)
 
-    def map_resources(self, root):
-        # TODO if provided a file it should still work (ie take parent of it)
-        self.directory = Directory.root(root)
-        self.resources = {path: resource for path, resource in self.directory.get_resources()}
+    def map_resources_for_path(self, root: Path):
+        tree = Tree.from_directory(path=root)
+        self.resources.update({path: resource for path, resource in tree.get_resources()})
+        return tree
+
+    def map_resources(self):
+        for resource in self.config.resource:
+            resource_path = Path(resource).resolve()  # TODO search in pythonpaths etc, iterate over directories if not file
+            res_model = Resource(resource_path)
+            self.resources[str(resource_path)] = res_model
+            tree = Tree(name=resource.name)
+            tree.children.append(res_model)
+            yield tree
+
+    def create_builtin_tree(self):
+        built_in = Library(BUILT_IN)
+        built_in.load_library()
+        built_in.filter_not_used = True
+        built_in.builtin = True
+
+        self.resources[BUILT_IN] = built_in
+        tree = Tree(name=BUILT_IN)
+        tree.children.append(built_in)
+        return tree
 
     def get_local_variables(self, suite):
         variables = Variables()
@@ -87,7 +115,7 @@ class Sherlock:
                 search_in.add(suite.source)
 
         for test in suite.tests:
-            self.visit_keyword(test, search_in, errors)
+            self.visit_keyword(test, search_in, errors)  # TODO visit test?
         if errors:
             self.log(f"\nErrors in {suite.source}:")
         for error in errors:
