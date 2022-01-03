@@ -218,6 +218,7 @@ class Tree:
                 # FIXME __pycache__ is still matched
                 if gitignore is not None and gitignore.match_file(gitignore_pattern):
                     continue
+                child = child.resolve()
                 if child.is_dir():
                     tree.children.append(cls.from_directory(path=child, gitignore=gitignore))
                 elif child.is_file():

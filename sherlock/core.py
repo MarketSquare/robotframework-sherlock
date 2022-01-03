@@ -62,9 +62,10 @@ class Sherlock:
 
     def map_resources(self):
         for resource in self.config.resource:
-            resource_path = Path(resource).resolve()  # TODO search in pythonpaths etc, iterate over directories if not file
-            res_model = Resource(resource_path)
-            self.resources[str(resource_path)] = res_model
+            resource = Path(resource)
+            resolved = resource.resolve()  # TODO search in pythonpaths etc, iterate over directories if not file
+            res_model = Resource(resolved)
+            self.resources[str(resolved)] = res_model
             tree = Tree(name=resource.name)
             tree.children.append(res_model)
             yield tree

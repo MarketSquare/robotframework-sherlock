@@ -53,7 +53,7 @@ class Config:
 
         parser.add_argument("path", metavar="SOURCE", default=self.path, type=Path, help="Path to source code")
         parser.add_argument(
-            "--resource", action="append", nargs="+", help="Path/name of resource to be included in analysis"
+            "--resource", action="append", help="Path/name of resource to be included in analysis"
         )
         parser.add_argument(
             "--output-path",
