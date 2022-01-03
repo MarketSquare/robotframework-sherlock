@@ -11,15 +11,12 @@ def path_to_test_data():
     return Path(Path(__file__).parent.parent, "test_data")
 
 
-class TestExampleWorkflow:
-    @pytest.fixture(scope="class", autouse=True)
-    def generate_robot_output(self, path_to_test_data):
-        source = path_to_test_data / "tests"
-        subprocess.run(f"robot --outputdir {path_to_test_data} {source}", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        yield
-        for path in (path_to_test_data / "log.html", path_to_test_data / "output.xml", path_to_test_data / "report.html"):
-            path.unlink(missing_ok=True)
+@pytest.fixture(scope="class")
+def run_with_tests():
+    return "tests"
 
+
+class TestExampleWorkflow:
     def test_with_xml_output(self, path_to_test_data):
         robot_output = path_to_test_data / "output.xml"
         source = path_to_test_data / "tests"

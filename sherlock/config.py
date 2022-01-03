@@ -8,6 +8,9 @@ from sherlock.file_utils import find_project_root, find_file_in_project_root
 from sherlock.exceptions import SherlockFatalError
 
 
+BUILT_IN = "BuiltIn"
+
+
 class CommaSeparated(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, values.split(","))
@@ -19,7 +22,9 @@ class Config:
         self.output_path = None
         self.log_output = None
         self.report: List[str] = ["print"]
+        self.include_builtin = False
         self.root = Path.cwd()
+        self.resource: List[str] = []
         if from_cli:
             self.parse_cli()
 
@@ -48,6 +53,9 @@ class Config:
 
         parser.add_argument("path", metavar="SOURCE", default=self.path, type=Path, help="Path to source code")
         parser.add_argument(
+            "--resource", action="append", help="Path/name of resource to be included in analysis"
+        )
+        parser.add_argument(
             "--output-path",
             type=Path,
             help="Path to Robot Framework output file",
@@ -65,6 +73,11 @@ class Config:
         parser.add_argument(
             "--config",
             help="Path to TOML configuration file",
+        )
+        parser.add_argument(
+            "--include-builtin",
+            help="Include BuiltIn libraries in analysis",
+            action="store_true",
         )
         return parser
 
@@ -113,6 +126,8 @@ class TomlConfigParser:
                 raise SherlockFatalError("Nesting configuration files is not allowed")
             elif key == "output_path":
                 read_config[key] = Path(value)
+            elif key == "include_builtin":
+                read_config[key] = str(value).lower() in ("true", "1", "yes", "t", "y")  # TODO tests
             elif key in self.look_up:
                 read_config[key] = value
             else:

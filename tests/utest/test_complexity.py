@@ -6,11 +6,9 @@ from .complexity_models import model_1complexity, model_3complexity, model_5comp
 
 
 class TestComplexity:
-    @pytest.mark.parametrize("string_model, complexity", [
-        (model_1complexity, 1),
-        (model_3complexity, 3),
-        (model_5complexity, 5)
-    ])
+    @pytest.mark.parametrize(
+        "string_model, complexity", [(model_1complexity, 1), (model_3complexity, 3), (model_5complexity, 5)]
+    )
     def test_complexity(self, string_model, complexity):
         model = get_model(string_model)
         kw_stat = KeywordStats(name="Dummy", node=model)
