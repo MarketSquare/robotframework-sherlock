@@ -127,11 +127,12 @@ class Sherlock:
     def visit_keyword(self, kw, search_in, errors):
         if isinstance(kw, Keyword):
             name = kw.kwname if self.from_output else kw.name
+            libname = kw.libname if self.from_output else None
             # TODO can match by resource name if executed with output.xml (resourceA.Keyword 3)
             found = []
             for resource in search_in:
                 # if resource in resources:
-                found += self.resources[resource].search(name, self.resources)
+                found += self.resources[resource].search(name, self.resources, libname)
             if not found:
                 errors.add(f"Keyword '{name}' definition not found")
             elif len(found) > 1:
