@@ -49,3 +49,33 @@ def match_tree(expected, actual):
         ):
             return False
     return True
+
+
+class Tree:
+    def __init__(self, name, keywords=None, children=None):
+        self.name = name
+        self.keywords = keywords
+        self.children = children
+
+    def to_json(self):
+        ret = {"name": self.name}
+        if self.keywords is not None:
+            ret["keywords"] = [kw.to_json() for kw in self.keywords]
+        if self.children is not None:
+            ret["children"] = [child.to_json() for child in self.children]
+        return ret
+
+
+class Keyword:
+    def __init__(self, name, used=None, complexity=None):
+        self.name = name
+        self.used = used
+        self.complexity = complexity
+
+    def to_json(self):
+        ret = {"name": self.name}
+        if self.used is not None:
+            ret["used"] = self.used
+        if self.complexity is not None:
+            ret["complexity"] = self.complexity
+        return ret

@@ -1,6 +1,7 @@
 from pathlib import Path
 import io
 import sys
+import tempfile
 import os
 import contextlib
 from unittest.mock import patch
@@ -29,37 +30,37 @@ def working_directory(path):
 
 class TestConfig:
     def test_load_args_from_cli(self):
-        with patch.object(
+        with tempfile.NamedTemporaryFile() as fp, patch.object(
             sys,
             "argv",
-            "sherlock --output-path output.xml --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output-path {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path("output.xml")
+            assert config.output_path == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
 
     def test_load_args_from_cli_no_pyproject(self):
-        with working_directory(Path.home()), patch.object(
+        with tempfile.NamedTemporaryFile() as fp, working_directory(Path.home()), patch.object(
             sys,
             "argv",
-            "sherlock --output-path output.xml --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output-path {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path("output.xml")
+            assert config.output_path == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
 
     def test_load_args_from_cli_overwrite_config(self, path_to_test_data):
         config_dir = path_to_test_data / "configs" / "pyproject"
-        with working_directory(config_dir), patch.object(
-            sys, "argv", "sherlock --output-path output_diff.xml path/to/directory".split()
+        with tempfile.NamedTemporaryFile() as fp, working_directory(config_dir), patch.object(
+            sys, "argv", f"sherlock --output-path {fp.name} path/to/directory".split()
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path("output_diff.xml")
+            assert config.output_path == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["print", "html"]
 
@@ -70,7 +71,6 @@ class TestConfig:
         ):
             config = Config()
             assert config.path == Path("path")
-            assert config.output_path == Path("output3.xml")
             assert config.log_output is None
             assert config.report == ["print"]
 

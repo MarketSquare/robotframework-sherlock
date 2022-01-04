@@ -6,9 +6,11 @@ import toml
 
 from sherlock.file_utils import find_project_root, find_file_in_project_root
 from sherlock.exceptions import SherlockFatalError
+from sherlock.version import __version__
 
 
 BUILT_IN = "BuiltIn"
+ROBOT_DEFAULT_OUTPUT = "output.xml"
 
 
 class CommaSeparated(argparse.Action):
@@ -18,7 +20,7 @@ class CommaSeparated(argparse.Action):
 
 class Config:
     def __init__(self, from_cli=True):
-        self.path = None
+        self.path = Path.cwd()
         self.output_path = None
         self.log_output = None
         self.report: List[str] = ["print"]
@@ -40,21 +42,32 @@ class Config:
             self.set_parsed_opts(default)
 
         self.set_parsed_opts(dict(**vars(parsed_args)))
+        self.validate_output_path()
+
+    def validate_output_path(self):
+        if self.output_path is None:
+            output_path = (self.path if self.path.is_dir() else self.path.parent) / ROBOT_DEFAULT_OUTPUT
+            if output_path.is_file():  # TODO document this
+                self.output_path = output_path
+        elif not self.output_path.is_file():
+            raise SherlockFatalError(
+                f"Reading Robot Framework output file failed. No such file: '{self.output_path}'"
+            ) from None
 
     def set_root(self, parsed_args):
-        self.root = find_project_root((getattr(parsed_args, "path", Path.cwd()),))  # TODO make iterable
+        self.root = find_project_root((getattr(parsed_args, "path", Path.cwd()),))
 
     def _create_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(
             prog="sherlock",
-            description="Code complexity analyser for Robot Framework.\n",
+            description=f"Code complexity analyser for Robot Framework. Version: {__version__}\n",
             argument_default=argparse.SUPPRESS,
         )
 
-        parser.add_argument("path", metavar="SOURCE", default=self.path, type=Path, help="Path to source code")
         parser.add_argument(
-            "--resource", action="append", help="Path/name of resource to be included in analysis"
+            "path", metavar="SOURCE", default=self.path, nargs="?", type=Path, help="Path to source code"
         )
+        parser.add_argument("--resource", action="append", help="Path/name of resource to be included in analysis")
         parser.add_argument(
             "--output-path",
             type=Path,
