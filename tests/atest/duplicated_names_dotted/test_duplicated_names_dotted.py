@@ -26,6 +26,7 @@ class TestDuplicatedNamesDotted:
             children=[
                 Tree(name="Library1", keywords=[Keyword(name="Keyword 1", used=2)]),
                 Tree(name="Library2", keywords=[Keyword(name="Keyword 1", used=1)]),
+                Tree(name="test.resource", keywords=[Keyword(name="Keyword 1", used=21, complexity=1)]),
                 Tree(name="test.robot", keywords=[]),
             ],
         ).to_json()
