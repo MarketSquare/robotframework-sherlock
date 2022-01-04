@@ -54,7 +54,6 @@ class ResourceVisitor(ast.NodeVisitor):
             self.resources.add(node.name)
 
     def visit_LibraryImport(self, node):  # noqa
-        # TODO aliases
         if node.name:
             self.libraries[(node.name, node.alias)] = node.args
 
