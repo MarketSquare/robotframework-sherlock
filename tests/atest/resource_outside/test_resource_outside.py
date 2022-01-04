@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import run_sherlock, match_tree
+from .. import run_sherlock, match_tree, Tree, Keyword
 
 
 @pytest.fixture(scope="class")
@@ -24,52 +24,30 @@ class TestResourceOutside:
         run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"], resource=[resource])
         with open("sherlock_tests.json") as f:
             data = json.load(f)
-        expected = {
-            "name": "tests",
-            # "type": "Directory",
-            "children": [
-                {
-                    "name": "resource2",
-                    # "type": "Directory",
-                    "children": [
-                        {
-                            "name": "file2.resource",
-                            "keywords": [
-                                {
-                                    "name": "Keyword 2",
-                                    "used": 1,
-                                    "complexity": 1,
-                                    # "status": "pass"
-                                },
-                                {
-                                    "name": "Keyword 3",
-                                    "used": 0,
-                                    "complexity": 1,
-                                    # "status": "pass"
-                                },
+        expected = Tree(
+            name="tests",
+            children=[
+                Tree(
+                    name="resource2",
+                    children=[
+                        Tree(
+                            name="file2.resource",
+                            keywords=[
+                                Keyword(name="Keyword 2", used=1, complexity=1),
+                                Keyword(name="Keyword 3", used=0, complexity=1),
                             ],
-                        },
+                        )
                     ],
-                },
-                {"name": "test.robot", "keywords": []},
+                ),
+                Tree(name="test.robot", keywords=[]),
             ],
-        }
+        ).to_json()
         assert match_tree(expected, data)
         with open("sherlock_file.resource.json") as f:
             data = json.load(f)
-        expected = {
-            "name": "file.resource",
-            "children": [{
-                "name": "file.resource",  # TODO fix trees for single files
-                "keywords": [
-                    {
-                        "name": "Keyword 1",
-                        "used": 1,
-                        "complexity": 1,
-                        # "status": "pass"
-                    },
-                ]
-            }
-            ]
-        }
+        # TODO fix trees for single files
+        expected = Tree(
+            name="file.resource",
+            children=[Tree(name="file.resource", keywords=[Keyword(name="Keyword 1", used=1, complexity=1)])],
+        ).to_json()
         assert match_tree(expected, data)

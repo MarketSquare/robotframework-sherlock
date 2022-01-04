@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import run_sherlock, match_tree
+from .. import run_sherlock, match_tree, Tree, Keyword
 
 
 @pytest.fixture(scope="class")
@@ -29,22 +29,9 @@ class TestMultipleSources:
         run_sherlock(robot_output=robot_output, source=source, report=["json"])
         with open("sherlock_resource1.json") as f:
             data = json.load(f)
-        expected = {
-            "name": "resource1",
-            # "type": "Directory",
-            "children": [
-                {
-                    "name": "file.resource",
-                    # "type": "Resource",
-                    "keywords": [
-                        {
-                            "name": "Keyword 1",
-                            "used": 0,  # TODO 0 since it doesn't know it was used by test.robot
-                            "complexity": 1,
-                            # "status": "pass"
-                        }
-                    ],
-                }
-            ],
-        }
+        # TODO used 0 since it doesn't know it was used by test.robot
+        expected = Tree(
+            name="resource1",
+            children=[Tree(name="file.resource", keywords=[Keyword(name="Keyword 1", used=0, complexity=1)])],
+        ).to_json()
         assert match_tree(expected, data)
