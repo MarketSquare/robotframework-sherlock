@@ -56,7 +56,7 @@ class ResourceVisitor(ast.NodeVisitor):
     def visit_LibraryImport(self, node):  # noqa
         # TODO aliases
         if node.name:
-            self.libraries[node.name] = node.args
+            self.libraries[(node.name, node.alias)] = node.args
 
 
 class KeywordStore:
@@ -115,6 +115,7 @@ class Library:
         self.type = "Library"
         self.path = path
         self.name = str(path)
+        self.orig_name = ""
         self.keywords = None
         self.loaded = False
         self.filter_not_used = False
@@ -126,6 +127,8 @@ class Library:
         # TODO handle exceptions (not enough args etc)
         name = str(self.path)
         library = TestLibrary(name, args)
+        # self.name = library.name
+        self.name = library.orig_name  # TODO for aliases
         self.keywords = KeywordLibraryStore(library)
 
     def search(self, name, *args):
@@ -167,22 +170,28 @@ class Resource:
             for var, value in variables.items():
                 resource = resource.replace(var, value)
             self.imports.add(str(Path(self.directory, resource).resolve()))
-        for library, args in visitor.libraries.items():
+        for (library, alias), args in visitor.libraries.items():
             for var, value in variables.items():
                 library = library.replace(var, value)
-            self.libraries[str(Path(self.directory, library).resolve())] = args
+            self.libraries[(str(Path(self.directory, library).resolve()), alias)] = args
 
-    def search(self, name, resources):
+    def search(self, name, resources, libname):
         found = resources["BuiltIn"].search(name, resources)
         if found:
             return found
         found += self.keywords.find_kw(name)
         for imported in self.imports:
             if imported in resources:
-                found += resources[imported].search(name, resources)
-        for lib, args in self.libraries.items():
+                found += resources[imported].search(name, resources, libname)
+        for (lib, alias), args in self.libraries.items():
             if lib in resources:
                 resources[lib].load_library(args)
+                if libname:
+                    if alias:
+                        if alias != libname:
+                            continue
+                    elif resources[lib].name != libname:
+                        continue
                 found += resources[lib].search(name, resources)
         return found
 
