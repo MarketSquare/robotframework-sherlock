@@ -56,7 +56,7 @@ class Sherlock:
                 json_report(tree, tree.name, self.config.root)
 
     def map_resources_for_path(self, root: Path):
-        tree = Tree.from_directory(path=root)
+        tree = Tree.from_directory(path=root, gitignore=self.config.default_gitignore)
         self.resources.update({path: resource for path, resource in tree.get_resources()})
         return tree
 

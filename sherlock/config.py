@@ -4,7 +4,7 @@ from pathlib import Path
 
 import toml
 
-from sherlock.file_utils import find_project_root, find_file_in_project_root
+from sherlock.file_utils import find_project_root, find_file_in_project_root, get_gitignore
 from sherlock.exceptions import SherlockFatalError
 from sherlock.version import __version__
 
@@ -26,6 +26,7 @@ class Config:
         self.report: List[str] = ["print"]
         self.include_builtin = False
         self.root = Path.cwd()
+        self.default_gitignore = None
         self.resource: List[str] = []
         if from_cli:
             self.parse_cli()
@@ -56,6 +57,8 @@ class Config:
 
     def set_root(self, parsed_args):
         self.root = find_project_root((getattr(parsed_args, "path", Path.cwd()),))
+        if self.root:
+            self.default_gitignore = get_gitignore(self.root)
 
     def _create_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser(

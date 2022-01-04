@@ -1,5 +1,4 @@
 from pathlib import Path
-import subprocess
 
 import pytest
 
@@ -26,12 +25,11 @@ class TestExampleWorkflow:
         source = path_to_test_data / "tests"
         run_sherlock(robot_output=None, source=source)
 
-    def test_with_html_report(self, path_to_test_data):
+    @pytest.mark.parametrize("report_type", ["json", "html"])
+    def test_with_report(self, path_to_test_data, report_type):
         robot_output = path_to_test_data / "output.xml"
         source = path_to_test_data / "tests"
-        run_sherlock(robot_output=robot_output, source=source, report=["html"])
-
-    def test_with_json_report(self, path_to_test_data):
-        robot_output = path_to_test_data / "output.xml"
-        source = path_to_test_data / "tests"
-        run_sherlock(robot_output=robot_output, source=source, report=["json"])
+        runner = run_sherlock(robot_output=robot_output, source=source, report=[report_type])
+        output = runner.config.root / f"sherlock_tests.{report_type}"
+        assert output.is_file()
+        output.unlink()

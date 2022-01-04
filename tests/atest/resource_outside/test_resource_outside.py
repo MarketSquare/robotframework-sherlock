@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import run_sherlock, match_tree, Tree, Keyword
+from .. import run_sherlock, match_tree, get_output, Tree, Keyword
 
 
 @pytest.fixture(scope="class")
@@ -22,8 +22,7 @@ class TestResourceOutside:
         # FIXME when path is directory, PermissionError is raised
         resource = path_to_test_data.parent / "resource1" / "file.resource"
         run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"], resource=[resource])
-        with open("sherlock_tests.json") as f:
-            data = json.load(f)
+        data = get_output("sherlock_tests.json")
         expected = Tree(
             name="tests",
             children=[
@@ -43,8 +42,7 @@ class TestResourceOutside:
             ],
         ).to_json()
         assert match_tree(expected, data)
-        with open("sherlock_file.resource.json") as f:
-            data = json.load(f)
+        data = get_output("sherlock_file.resource.json")
         # TODO fix trees for single files
         expected = Tree(
             name="file.resource",

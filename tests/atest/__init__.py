@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from sherlock.config import Config
 from sherlock.core import Sherlock
 
@@ -13,6 +16,14 @@ def run_sherlock(robot_output, source, report=None, resource=None):
 
     sherlock = Sherlock(config=config)
     sherlock.run()  # TODO create special report readable by tests?
+    return sherlock
+
+
+def get_output(output):
+    with open(output) as f:
+        data = json.load(f)
+    Path(output).unlink()
+    return data
 
 
 def match_tree(expected, actual):

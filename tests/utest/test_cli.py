@@ -41,7 +41,11 @@ class TestCli:
     def test_default_output_path(self):
         with tempfile.NamedTemporaryFile() as fp, patch.object(
             sherlock.config, "ROBOT_DEFAULT_OUTPUT", fp.name
-        ), patch.object(sys, "argv", f"sherlock {Path(fp.name).parent}".split(),):
+        ), patch.object(
+            sys,
+            "argv",
+            f"sherlock {Path(fp.name).parent}".split(),
+        ):
             config = Config()
             assert config.output_path == config.path / fp.name
 
