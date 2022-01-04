@@ -181,6 +181,8 @@ class Resource:
         found += self.keywords.find_kw(name)
         for imported in self.imports:
             if imported in resources:
+                if libname and Path(imported).stem != libname:
+                    continue
                 found += resources[imported].search(name, resources, libname)
         for (lib, alias), args in self.libraries.items():
             if lib in resources:

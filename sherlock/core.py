@@ -128,7 +128,6 @@ class Sherlock:
         if isinstance(kw, Keyword):
             name = kw.kwname if self.from_output else kw.name
             libname = kw.libname if self.from_output else None
-            # TODO can match by resource name if executed with output.xml (resourceA.Keyword 3)
             found = []
             for resource in search_in:
                 # if resource in resources:
