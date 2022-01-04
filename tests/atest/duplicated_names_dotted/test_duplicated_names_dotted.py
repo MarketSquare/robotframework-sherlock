@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import run_sherlock, match_tree, Tree, Keyword
+from .. import run_sherlock, get_output, match_tree, Tree, Keyword
 
 
 @pytest.fixture(scope="class")
@@ -20,13 +20,13 @@ class TestDuplicatedNamesDotted:
     def test(self, path_to_test_data):
         robot_output = path_to_test_data / "output.xml"
         run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"])
-        with open("sherlock_test_data.json") as f:
-            data = json.load(f)
+        data = get_output("sherlock_test_data.json")
         expected = Tree(
             name="test_data",
-            children=[Tree(name="Library1", keywords=[Keyword(name="Keyword 1", used=2)]),
-                      Tree(name="Library2", keywords=[Keyword(name="Keyword 1", used=1)]),
-                      Tree(name="test.robot", keywords=[]),
-                      Tree(name="__pycache__")],  # FIXME
+            children=[
+                Tree(name="Library1", keywords=[Keyword(name="Keyword 1", used=2)]),
+                Tree(name="Library2", keywords=[Keyword(name="Keyword 1", used=1)]),
+                Tree(name="test.robot", keywords=[]),
+            ],
         ).to_json()
         assert match_tree(expected, data)

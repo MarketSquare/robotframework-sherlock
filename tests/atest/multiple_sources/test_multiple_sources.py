@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import run_sherlock, match_tree, Tree, Keyword
+from .. import run_sherlock, get_output, match_tree, Tree, Keyword
 
 
 @pytest.fixture(scope="class")
@@ -27,8 +27,7 @@ class TestMultipleSources:
         robot_output = path_to_test_data / "output.xml"
         source = path_to_test_data / "resource1"
         run_sherlock(robot_output=robot_output, source=source, report=["json"])
-        with open("sherlock_resource1.json") as f:
-            data = json.load(f)
+        data = get_output("sherlock_resource1.json")
         # TODO used 0 since it doesn't know it was used by test.robot
         expected = Tree(
             name="resource1",

@@ -213,29 +213,25 @@ class Tree:
         self.children = []
 
     @classmethod
-    def from_directory(cls, path: Path, root: bool = False, gitignore: Optional[PathSpec] = None):
+    def from_directory(cls, path: Path, gitignore: Optional[PathSpec] = None):
         tree = cls(str(path.name))
 
-        if root:
-            path = Path(path).resolve()
-            gitignore = get_gitignore(path)
-            tree.children.append(cls.from_directory(path=path, gitignore=gitignore))
-        else:
-            for child in path.iterdir():
-                gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
-                # FIXME __pycache__ is still matched
-                if gitignore is not None and gitignore.match_file(gitignore_pattern):
+        for child in path.iterdir():
+            gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
+            if gitignore is not None and gitignore.match_file(gitignore_pattern):
+                continue
+            child = child.resolve()
+            if child.is_dir():
+                child_tree = cls.from_directory(path=child, gitignore=gitignore)
+                if child_tree.children:  # if the directory is empty (no libraries or resources) skip it
+                    tree.children.append(child_tree)
+            elif child.is_file():
+                if child.suffix not in INCLUDE_EXT:
                     continue
-                child = child.resolve()
-                if child.is_dir():
-                    tree.children.append(cls.from_directory(path=child, gitignore=gitignore))
-                elif child.is_file():
-                    if child.suffix not in INCLUDE_EXT:
-                        continue
-                    if child.suffix == ".py":  # TODO better mapping
-                        tree.children.append(Library(child))
-                    else:
-                        tree.children.append(Resource(child))
+                if child.suffix == ".py":  # TODO better mapping
+                    tree.children.append(Library(child))
+                else:
+                    tree.children.append(Resource(child))
         return tree
 
     def get_resources(self):
