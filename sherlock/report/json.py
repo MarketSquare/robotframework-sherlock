@@ -6,10 +6,13 @@ def directory_to_json(directory):
     if directory.type == "Tree":  # TODO Directory can have keywords (__init__.py)
         ret["children"] = [directory_to_json(resource) for resource in directory.children]
     else:
-        ret["keywords"] = [
-            {"name": kw.name, "used": kw.used, "complexity": kw.complexity, "status": "pass"}  # TODO
-            for kw in directory.keywords
-        ]
+        if directory.keywords is None:
+            ret["keywords"] = []
+        else:
+            ret["keywords"] = [
+                {"name": kw.name, "used": kw.used, "complexity": kw.complexity, "status": "pass"}  # TODO
+                for kw in directory.keywords
+            ]
     return ret
 
 

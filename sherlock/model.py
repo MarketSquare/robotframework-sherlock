@@ -8,7 +8,7 @@ from pathspec import PathSpec
 from robot.api import get_resource_model
 from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
-from robot.utils import NormalizedDict
+from robot.utils import NormalizedDict, find_file
 
 from sherlock.complexity import ComplexityChecker
 from sherlock.file_utils import get_gitignore, INCLUDE_EXT
@@ -109,6 +109,23 @@ class KeywordResourceStore(KeywordStore):
         return pattern.match(name)
 
 
+def _normalize_library_path(library):
+    path = library.replace('/', os.sep)
+    if os.path.exists(path):
+        return os.path.abspath(path)
+    return library
+
+
+def _get_library_name(name, directory):
+    if not _is_library_by_path(name):
+        return name
+    return find_file(name, directory, "Library")  # TODO handle DataError when not found
+
+
+def _is_library_by_path(path):
+    return path.lower().endswith(('.py', '/', os.sep))
+
+
 class Library:
     def __init__(self, path):
         self.type = "Library"
@@ -126,8 +143,7 @@ class Library:
         # TODO handle exceptions (not enough args etc)
         name = str(self.path)
         library = TestLibrary(name, args)
-        # self.name = library.name
-        self.name = library.orig_name  # TODO for aliases
+        self.name = library.orig_name
         self.keywords = KeywordLibraryStore(library)
 
     def search(self, name, *args):
@@ -170,19 +186,23 @@ class Resource:
                 resource = resource.replace(var, value)
             self.imports.add(str(Path(self.directory, resource).resolve()))
         for (library, alias), args in visitor.libraries.items():
-            for var, value in variables.items():
+            for var, value in variables.items():  # TODO handle with Variables
                 library = library.replace(var, value)
-            self.libraries[(str(Path(self.directory, library).resolve()), alias)] = args
+            library = _normalize_library_path(library)
+            library = _get_library_name(library, self.directory)
+            self.libraries[(library, alias)] = args
 
     def search(self, name, resources, libname):
         found = resources["BuiltIn"].search(name, resources)
         if found:
             return found
-        found += self.keywords.find_kw(name)
+        if libname:
+            if Path(self.path).stem == libname:
+                found += self.keywords.find_kw(name)
+        else:
+            found += self.keywords.find_kw(name)
         for imported in self.imports:
             if imported in resources:
-                if libname and Path(imported).stem != libname:
-                    continue
                 found += resources[imported].search(name, resources, libname)
         for (lib, alias), args in self.libraries.items():
             if lib in resources:
