@@ -64,7 +64,10 @@ class Sherlock:
         for resource in self.config.resource:
             resource = Path(resource)
             resolved = resource.resolve()  # TODO search in pythonpaths etc, iterate over directories if not file
-            res_model = Resource(resolved)
+            if not resolved.exists() or resolved.suffix == ".py":
+                res_model = Library(resolved)
+            else:
+                res_model = Resource(resolved)
             self.resources[str(resolved)] = res_model
             tree = Tree(name=resource.name)
             tree.children.append(res_model)
@@ -92,11 +95,11 @@ class Sherlock:
         return variables
 
     def visit_suite(self, suite):
-        search_in = set()
+        search_in = None
         errors = set()
         # TODO set them from --variables and such
         if hasattr(suite, "resource"):
-            search_in.add(suite.resource.source)
+            search_in = suite.resource.source
             for imported in suite.resource.imports:
                 if imported.type == "Variables":
                     continue
@@ -109,14 +112,14 @@ class Sherlock:
                     continue
                 if imported.type == "Library":
                     self.resources[name].load_library(imported.args)
-                # search_in.add(name)
         else:
             # handle libname (such as resourceA) with accordance to possible paths
             if suite.source in self.resources:
-                search_in.add(suite.source)
+                search_in = suite.source
 
-        for test in suite.tests:
-            self.visit_keyword(test, search_in, errors)  # TODO visit test?
+        if search_in is not None:
+            for test in suite.tests:
+                self.visit_keyword(test, search_in, errors)  # TODO visit test?
         if errors:
             self.log(f"\nErrors in {suite.source}:")
         for error in errors:
@@ -128,10 +131,7 @@ class Sherlock:
         if isinstance(kw, Keyword):
             name = kw.kwname if self.from_output else kw.name
             libname = kw.libname if self.from_output else None
-            found = []
-            for resource in search_in:
-                # if resource in resources:
-                found += self.resources[resource].search(name, self.resources, libname)
+            found = self.resources[search_in].search(name, self.resources, libname)
             if not found:
                 errors.add(f"Keyword '{name}' definition not found")
             elif len(found) > 1:
