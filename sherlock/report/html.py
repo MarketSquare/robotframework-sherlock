@@ -2,16 +2,17 @@ from pathlib import Path
 
 from jinja2 import Template
 
-from sherlock.model import DIRECTORY_TYPE, RESOURCE_TYPE, LIBRARY_TYPE
+from sherlock.model import DIRECTORY_TYPE, RESOURCE_TYPE, LIBRARY_TYPE, KeywordTimings
 
 
 class KeywordResult:
-    def __init__(self, element_id, name, used, complexity, status):
+    def __init__(self, element_id, name, used, complexity, status, timings):
         self.element_id = element_id
         self.name = name
         self.used = used
         self.complexity = complexity
         self.status = status
+        self.timings = timings
 
 
 class HtmlResultModel:
@@ -23,6 +24,7 @@ class HtmlResultModel:
         self.show = "BuiltIn" not in self.name
         self.children = []
         self.keywords = []
+        self.timings = None
         self.status = "pass"
         self.fill_keywords(model)
         self.fill_children(model)
@@ -30,10 +32,19 @@ class HtmlResultModel:
     def fill_keywords(self, model):
         if model.type not in (RESOURCE_TYPE, LIBRARY_TYPE):
             return
+        self.timings = KeywordTimings()
         for index, kw in enumerate(model.keywords):
+            self.timings += kw.timings
             new_id = f"{self.element_id}-k{index}"
             self.keywords.append(
-                KeywordResult(element_id=new_id, name=kw.name, used=kw.used, complexity=kw.complexity, status="pass")
+                KeywordResult(
+                    element_id=new_id,
+                    name=kw.name,
+                    used=kw.used,
+                    complexity=kw.complexity,
+                    status="pass",
+                    timings=kw.timings,
+                )
             )
 
     def fill_children(self, model):

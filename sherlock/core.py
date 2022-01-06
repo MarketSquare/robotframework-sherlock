@@ -141,5 +141,7 @@ class Sherlock:
                 errors.add(s)
             else:
                 found[0].used += 1
+                if self.from_output:
+                    found[0].timings.add_timing(kw.elapsedtime)
         for sub_kw in getattr(kw, "body", ()):
             self.visit_keyword(sub_kw, search_in, errors)

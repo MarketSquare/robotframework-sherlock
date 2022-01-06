@@ -1,6 +1,7 @@
 import ast
 import os
 import textwrap
+import math
 from pathlib import Path
 from typing import Optional
 from pathspec import PathSpec
@@ -26,6 +27,7 @@ class KeywordStats:
         self.used = 0
         self.node = node
         self.complexity = self.get_complexity()
+        self.timings = KeywordTimings()
 
     def __str__(self, indents=None):
         if indents:
@@ -45,6 +47,77 @@ class KeywordStats:
         checker = ComplexityChecker()
         checker.visit(self.node)
         return checker.complexity()
+
+
+class KeywordTimings:
+    def __init__(self):
+        self._max = 0
+        self._min = math.inf
+        self._avg = 0
+        self._total = 0
+        self._count = 0
+
+    def add_timing(self, elapsed):
+        self._count += 1
+        self._max = max(self._max, elapsed)
+        self._min = min(self._min, elapsed)
+        self._total += elapsed
+        self._avg = math.floor(self._total / self._count)
+
+    def format_time(self, milliseconds):
+        if not self._count:
+            return "00:00:00:00"
+        hours, milliseconds = divmod(milliseconds, 360000)
+        minutes, milliseconds = divmod(milliseconds, 60000)
+        seconds, milliseconds = divmod(milliseconds, 1000)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{milliseconds:03d}"
+
+    @property
+    def max(self):
+        return self.format_time(self._max)
+
+    @max.setter
+    def max(self, value):
+        self._max = value
+
+    @property
+    def min(self):
+        return self.format_time(self._min)
+
+    @min.setter
+    def min(self, value):
+        self._min = value
+
+    @property
+    def avg(self):
+        return self.format_time(self._avg)
+
+    @avg.setter
+    def avg(self, value):
+        self._avg = value
+
+    @property
+    def total(self):
+        return self.format_time(self._total)
+
+    @total.setter
+    def total(self, value):
+        self._total = value
+
+    def __add__(self, other):
+        timing = KeywordTimings()
+        timing.max = self._max
+        timing.min = self._min
+        timing._count = self._count
+        timing.avg = self._avg
+        timing.total = self._total
+
+        if other._count:
+            timing.add_timing(other._total)
+        return timing
+
+    def __radd__(self, other):
+        return self.__add__(other)
 
 
 class ResourceVisitor(ast.NodeVisitor):
@@ -126,7 +199,7 @@ class KeywordResourceStore(KeywordStore):
 
 
 def _normalize_library_path(library):
-    path = library.replace('/', os.sep)
+    path = library.replace("/", os.sep)
     if os.path.exists(path):
         return os.path.abspath(path)
     return library
@@ -139,7 +212,7 @@ def _get_library_name(name, directory):
 
 
 def _is_library_by_path(path):
-    return path.lower().endswith(('.py', '/', os.sep))
+    return path.lower().endswith((".py", "/", os.sep))
 
 
 class File:
