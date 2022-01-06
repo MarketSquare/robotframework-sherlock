@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 from pathspec import PathSpec
 
-from robot.api import get_resource_model
+from robot.api import get_model
 from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict, find_file
@@ -21,11 +21,17 @@ class KeywordStats:
         self.node = node
         self.complexity = self.get_complexity()
 
-    def __str__(self):
-        s = f"{self.name} | Used: {self.used}"
+    def __str__(self, indents=None):
+        if indents:
+            s = f"{self.name: <{indents[0] + 2}} | Used: {self.used: <{indents[1] + 1}}"
+        else:
+            s = f"{self.name} | Used: {self.used}"
         if self.complexity:
             s += f" | Complexity: {self.complexity}"
         return s + "\n"
+
+    def to_str(self, indents=None):
+        return self.__str__(indents)
 
     def get_complexity(self):
         if not self.node:
@@ -41,6 +47,10 @@ class ResourceVisitor(ast.NodeVisitor):
         self.embedded_keywords = dict()
         self.resources = set()
         self.libraries = dict()
+        self.has_tests = False
+
+    def visit_TestCase(self, node):  # noqa
+        self.has_tests = True
 
     def visit_Keyword(self, node):  # noqa
         embedded = EmbeddedArguments(node.name)
@@ -126,16 +136,44 @@ def _is_library_by_path(path):
     return path.lower().endswith(('.py', '/', os.sep))
 
 
-class Library:
+class File:
     def __init__(self, path):
-        self.type = "Library"
         self.path = path
         self.name = str(path)
-        self.orig_name = ""
         self.keywords = None
+
+    def get_resources(self):
+        return str(self.path), self
+
+    def get_type(self):
+        raise NotImplemented
+
+    def __str__(self):
+        s = f"{self.get_type()}: {self.name}\n"
+        if not self.keywords:
+            return s
+        keywords = [kw for kw in self.keywords]
+        if keywords:
+            indents = [0, 0]
+            for kw in keywords:
+                indents[0] = max(indents[0], len(kw.name))
+                indents[1] = max(indents[1], len(str(kw.used)))
+            s += f"  Keywords:\n"
+            for kw in keywords:
+                s += "    " + kw.to_str(indents=indents)
+        return s
+
+
+class Library(File):
+    def __init__(self, path):
+        super().__init__(path)
+        self.type = "Library"
         self.loaded = False
         self.filter_not_used = False
         self.builtin = False
+
+    def get_type(self):
+        return self.type
 
     def load_library(self, args=None):
         if self.keywords:
@@ -151,34 +189,22 @@ class Library:
             return  # TODO lib not init
         return self.keywords.find_kw(name)
 
-    def get_resources(self):
-        return str(self.path), self
 
-    def __str__(self):
-        s = f"Library: {self.path}\n"
-        if self.keywords:
-            s += f"  Keywords:\n"
-            for kw in self.keywords:
-                if self.filter_not_used and not kw.used:
-                    continue
-                s += "    " + str(kw)
-        return s
-
-
-class Resource:
+class Resource(File):
     def __init__(self, path: Path):
+        super().__init__(path)
         self.type = "Resource"
-        self.path = path
         self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
         self.resources = dict()
         self.imports = set()
         self.libraries = dict()
 
-        model = get_resource_model(str(path), data_only=True, curdir=str(path.cwd()))
+        model = get_model(str(path), data_only=True, curdir=str(path.cwd()))
         visitor = ResourceVisitor()
         visitor.visit(model)
         self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords)
+        self.has_tests = visitor.has_tests
         # set them from --variables and such
         variables = {"${/}": os.path.sep}
         for resource in visitor.resources:
@@ -192,40 +218,25 @@ class Resource:
             library = _get_library_name(library, self.directory)
             self.libraries[(library, alias)] = args
 
+    def get_type(self):
+        return "Suite" if self.has_tests else "Resource"
+
     def search(self, name, resources, libname):
         found = resources["BuiltIn"].search(name, resources)
         if found:
             return found
-        if libname:
-            if Path(self.path).stem == libname:
-                found += self.keywords.find_kw(name)
-        else:
+        if not libname or Path(self.path).stem == libname:
             found += self.keywords.find_kw(name)
+
         for imported in self.imports:
             if imported in resources:
                 found += resources[imported].search(name, resources, libname)
         for (lib, alias), args in self.libraries.items():
             if lib in resources:
                 resources[lib].load_library(args)
-                if libname:
-                    if alias:
-                        if alias != libname:
-                            continue
-                    elif resources[lib].name != libname:
-                        continue
-                found += resources[lib].search(name, resources)
+                if not libname or (alias and alias == libname) or (not alias and resources[lib].name == libname):
+                    found += resources[lib].search(name, resources)
         return found
-
-    def get_resources(self):
-        return str(self.path), self
-
-    def __str__(self):
-        s = f"File: {self.path}\n"
-        if self.keywords:
-            s += f"  Keywords:\n"
-            for kw in self.keywords:
-                s += "    " + str(kw)
-        return s
 
 
 class Tree:
@@ -264,4 +275,4 @@ class Tree:
                 yield resource.get_resources()
 
     def __str__(self):
-        return self.name
+        return f"Directory: {self.name}"

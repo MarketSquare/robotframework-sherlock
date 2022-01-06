@@ -49,7 +49,7 @@ class Sherlock:
             if not self.config.include_builtin and tree.name == BUILT_IN:
                 continue
             if "print" in self.config.report:
-                print_report(tree, tree.name, self.config.log_output)
+                print_report(tree, self.config.log_output)
             if "html" in self.config.report:
                 html_report(tree, tree.name, self.config.root)
             if "json" in self.config.report:
