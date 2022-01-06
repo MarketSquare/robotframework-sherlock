@@ -19,7 +19,7 @@ def run_with_tests():
 class TestLibraryFromResource:
     def test(self, path_to_test_data):
         robot_output = path_to_test_data / "output.xml"
-        run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json", "html"])
+        run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"])
         data = get_output("sherlock_test_data.json")
         expected = Tree(
             name="test_data",
