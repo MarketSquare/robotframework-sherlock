@@ -11,7 +11,13 @@ from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict, find_file
 
 from sherlock.complexity import ComplexityChecker
-from sherlock.file_utils import get_gitignore, INCLUDE_EXT
+from sherlock.file_utils import INCLUDE_EXT
+
+
+DIRECTORY_TYPE = "Directory"
+RESOURCE_TYPE = "Resource"
+LIBRARY_TYPE = "Library"
+SUITE_TYPE = "Suite"
 
 
 class KeywordStats:
@@ -129,7 +135,7 @@ def _normalize_library_path(library):
 def _get_library_name(name, directory):
     if not _is_library_by_path(name):
         return name
-    return find_file(name, directory, "Library")  # TODO handle DataError when not found
+    return find_file(name, directory, LIBRARY_TYPE)  # TODO handle DataError when not found
 
 
 def _is_library_by_path(path):
@@ -167,7 +173,7 @@ class File:
 class Library(File):
     def __init__(self, path):
         super().__init__(path)
-        self.type = "Library"
+        self.type = LIBRARY_TYPE
         self.loaded = False
         self.filter_not_used = False
         self.builtin = False
@@ -193,7 +199,7 @@ class Library(File):
 class Resource(File):
     def __init__(self, path: Path):
         super().__init__(path)
-        self.type = "Resource"
+        self.type = RESOURCE_TYPE
         self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
         self.resources = dict()
@@ -219,7 +225,7 @@ class Resource(File):
             self.libraries[(library, alias)] = args
 
     def get_type(self):
-        return "Suite" if self.has_tests else "Resource"
+        return SUITE_TYPE if self.has_tests else RESOURCE_TYPE
 
     def search(self, name, resources, libname):
         found = resources["BuiltIn"].search(name, resources)
@@ -242,12 +248,14 @@ class Resource(File):
 class Tree:
     def __init__(self, name):
         self.name = name
-        self.type = "Tree"
+        self.type = DIRECTORY_TYPE
+        self.path = ""
         self.children = []
 
     @classmethod
     def from_directory(cls, path: Path, gitignore: Optional[PathSpec] = None):
         tree = cls(str(path.name))
+        tree.path = path
 
         for child in path.iterdir():
             gitignore_pattern = f"{child}/" if child.is_dir() else str(child)
@@ -269,7 +277,7 @@ class Tree:
 
     def get_resources(self):
         for resource in self.children:
-            if resource.type == "Tree":
+            if resource.type == DIRECTORY_TYPE:
                 yield from resource.get_resources()
             else:
                 yield resource.get_resources()

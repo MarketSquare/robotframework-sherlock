@@ -1,9 +1,11 @@
 import json
 
+from sherlock.model import DIRECTORY_TYPE
+
 
 def directory_to_json(directory):
     ret = {"name": str(directory.name), "type": directory.type}
-    if directory.type == "Tree":  # TODO Directory can have keywords (__init__.py)
+    if directory.type == DIRECTORY_TYPE:  # TODO Directory can have keywords (__init__.py)
         ret["children"] = [directory_to_json(resource) for resource in directory.children]
     else:
         if directory.keywords is None:
