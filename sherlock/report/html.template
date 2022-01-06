@@ -272,8 +272,21 @@ h2 {
 }
 </style>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(function() {
+    $('.element-header').on('click', function () {
+        $(this).siblings(".children").toggle('slow');
+        $(this).children(".element-header-left").toggleClass("closed");
+    });
+});
+</script>
+
 </head>
 <body>
+<div id="header">
+    <h1>Sherlock Log</h1>
+</div>
 {% for directory in tree recursive %}
 {%- if directory.show -%}
 <div id="{{ directory.element_id }}" class="directory">
@@ -289,7 +302,7 @@ h2 {
             <tbody>
                 <tr>
                     <th>Source:</th>
-                    <td><a href="{{ directory.path }}">{{ directory.path }}</a></td>
+                    <td><a href="{{ directory.path }}">{{ directory.path.name }}</a></td>
                 </tr>
                 {%- if directory.type in ("RESOURCE", "LIBRARY") -%}
                 <tr>
@@ -315,10 +328,12 @@ h2 {
                             <th>Used:</th>
                             <td>{{ keyword.used }}</td>
                         </tr>
+                        {%- if keyword.complexity is not none -%}
                          <tr>
                              <th>Complexity:</th>
                              <td>{{ keyword.complexity }}</td>
                          </tr>
+                        {%- endif -%}
                      </tbody>
                  </table>
              </div>
