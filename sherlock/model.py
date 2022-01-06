@@ -136,16 +136,44 @@ def _is_library_by_path(path):
     return path.lower().endswith(('.py', '/', os.sep))
 
 
-class Library:
+class File:
     def __init__(self, path):
-        self.type = "Library"
         self.path = path
         self.name = str(path)
-        self.orig_name = ""
         self.keywords = None
+
+    def get_resources(self):
+        return str(self.path), self
+
+    def get_type(self):
+        raise NotImplemented
+
+    def __str__(self):
+        s = f"{self.get_type()}: {self.name}\n"
+        if not self.keywords:
+            return s
+        keywords = [kw for kw in self.keywords]
+        if keywords:
+            indents = [0, 0]
+            for kw in keywords:
+                indents[0] = max(indents[0], len(kw.name))
+                indents[1] = max(indents[1], len(str(kw.used)))
+            s += f"  Keywords:\n"
+            for kw in keywords:
+                s += "    " + kw.to_str(indents=indents)
+        return s
+
+
+class Library(File):
+    def __init__(self, path):
+        super().__init__(path)
+        self.type = "Library"
         self.loaded = False
         self.filter_not_used = False
         self.builtin = False
+
+    def get_type(self):
+        return self.type
 
     def load_library(self, args=None):
         if self.keywords:
@@ -161,31 +189,11 @@ class Library:
             return  # TODO lib not init
         return self.keywords.find_kw(name)
 
-    def get_resources(self):
-        return str(self.path), self
 
-    def __str__(self):
-        s = f"Library: {self.name}\n"
-        if not self.keywords:
-            return s
-        keywords = [kw for kw in self.keywords]
-        if keywords:
-            s += f"  Keywords:\n"
-            indents = [0, 0]
-            for kw in keywords:
-                indents[0] = max(indents[0], len(kw.name))
-                indents[1] = max(indents[1], len(str(kw.used)))
-            for kw in keywords:
-                if self.filter_not_used and not kw.used:
-                    continue
-                s += "    " + kw.to_str(indents=indents)
-        return s
-
-
-class Resource:
+class Resource(File):
     def __init__(self, path: Path):
+        super().__init__(path)
         self.type = "Resource"
-        self.path = path
         self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
         self.resources = dict()
@@ -210,48 +218,25 @@ class Resource:
             library = _get_library_name(library, self.directory)
             self.libraries[(library, alias)] = args
 
+    def get_type(self):
+        return "Suite" if self.has_tests else "Resource"
+
     def search(self, name, resources, libname):
         found = resources["BuiltIn"].search(name, resources)
         if found:
             return found
-        if libname:
-            if Path(self.path).stem == libname:
-                found += self.keywords.find_kw(name)
-        else:
+        if not libname or Path(self.path).stem == libname:
             found += self.keywords.find_kw(name)
+
         for imported in self.imports:
             if imported in resources:
                 found += resources[imported].search(name, resources, libname)
         for (lib, alias), args in self.libraries.items():
             if lib in resources:
                 resources[lib].load_library(args)
-                if libname:
-                    if alias:
-                        if alias != libname:
-                            continue
-                    elif resources[lib].name != libname:
-                        continue
-                found += resources[lib].search(name, resources)
+                if not libname or (alias and alias == libname) or (not alias and resources[lib].name == libname):
+                    found += resources[lib].search(name, resources)
         return found
-
-    def get_resources(self):
-        return str(self.path), self
-
-    def __str__(self):
-        file_type = "Suite" if self.has_tests else "Resource"
-        s = f"{file_type}: {self.name}\n"
-        if not self.keywords:
-            return s
-        keywords = [kw for kw in self.keywords]
-        if keywords:
-            indents = [0, 0]
-            for kw in keywords:
-                indents[0] = max(indents[0], len(kw.name))
-                indents[1] = max(indents[1], len(str(kw.used)))
-            s += f"  Keywords:\n"
-            for kw in keywords:
-                s += "    " + kw.to_str(indents=indents)
-        return s
 
 
 class Tree:
