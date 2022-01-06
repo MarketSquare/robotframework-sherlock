@@ -30,7 +30,7 @@ class TestLibraryFromResource:
                     keywords=[
                         Keyword(name="My Keyword", used=1),
                         Keyword(name="Not Used", used=0),
-                        Keyword(name="Third Keyword"),
+                        Keyword(name="Third Keyword", used=2),
                     ],
                 ),
                 Tree(name="test.robot", keywords=[]),

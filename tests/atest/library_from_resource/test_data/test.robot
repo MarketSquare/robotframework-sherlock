@@ -6,3 +6,6 @@ Resource    imports.resource
 Test
     My Keyword
     Third Keyword
+
+Test2
+    Third Keyword

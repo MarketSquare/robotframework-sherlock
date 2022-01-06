@@ -29,17 +29,15 @@ class KeywordStats:
         self.complexity = self.get_complexity()
         self.timings = KeywordTimings()
 
-    def __str__(self, indents=None):
-        if indents:
-            s = f"{self.name: <{indents[0] + 2}} | Used: {self.used: <{indents[1] + 1}}"
-        else:
-            s = f"{self.name} | Used: {self.used}"
+    def __str__(self):
+        s = f"{self.name}\n"
+        s += f"  Used: {self.used}\n"
         if self.complexity:
-            s += f" | Complexity: {self.complexity}"
-        return s + "\n"
-
-    def to_str(self, indents=None):
-        return self.__str__(indents)
+            s += f"  Complexity: {self.complexity}\n"
+        if self.used:
+            s += "  Timings:\n"
+            s += textwrap.indent(str(self.timings), "    ")
+        return s
 
     def get_complexity(self):
         if not self.node:
@@ -118,6 +116,14 @@ class KeywordTimings:
 
     def __radd__(self, other):
         return self.__add__(other)
+
+    def __str__(self):
+        s = f"Total elapsed time:      {self.total}\n"
+        if self._count > 1:
+            s += f"Shortest execution time: {self.min}\n" \
+                 f"Longest execution time:  {self.max}\n" \
+                 f"Average execution time:  {self.avg}\n"
+        return s
 
 
 class ResourceVisitor(ast.NodeVisitor):
@@ -233,13 +239,15 @@ class File:
             return s
         keywords = [kw for kw in self.keywords]
         if keywords:
-            indents = [0, 0]
+            timings = KeywordTimings()
             for kw in keywords:
-                indents[0] = max(indents[0], len(kw.name))
-                indents[1] = max(indents[1], len(str(kw.used)))
+                if kw.used:
+                    timings += kw.timings
+            s += "  Timings:\n"
+            s += textwrap.indent(str(timings), "    ")
             s += f"  Keywords:\n"
             for kw in keywords:
-                s += "    " + kw.to_str(indents=indents)
+                s += textwrap.indent(str(kw), "    ")
         return s
 
 
