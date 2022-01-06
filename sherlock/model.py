@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 from pathspec import PathSpec
 
-from robot.api import get_resource_model
+from robot.api import get_model
 from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict, find_file
@@ -21,11 +21,17 @@ class KeywordStats:
         self.node = node
         self.complexity = self.get_complexity()
 
-    def __str__(self):
-        s = f"{self.name} | Used: {self.used}"
+    def __str__(self, indents=None):
+        if indents:
+            s = f"{self.name: <{indents[0] + 2}} | Used: {self.used: <{indents[1] + 1}}"
+        else:
+            s = f"{self.name} | Used: {self.used}"
         if self.complexity:
             s += f" | Complexity: {self.complexity}"
         return s + "\n"
+
+    def to_str(self, indents=None):
+        return self.__str__(indents)
 
     def get_complexity(self):
         if not self.node:
@@ -41,6 +47,10 @@ class ResourceVisitor(ast.NodeVisitor):
         self.embedded_keywords = dict()
         self.resources = set()
         self.libraries = dict()
+        self.has_tests = False
+
+    def visit_TestCase(self, node):  # noqa
+        self.has_tests = True
 
     def visit_Keyword(self, node):  # noqa
         embedded = EmbeddedArguments(node.name)
@@ -155,13 +165,20 @@ class Library:
         return str(self.path), self
 
     def __str__(self):
-        s = f"Library: {self.path}\n"
-        if self.keywords:
+        s = f"Library: {self.name}\n"
+        if not self.keywords:
+            return s
+        keywords = [kw for kw in self.keywords]
+        if keywords:
             s += f"  Keywords:\n"
-            for kw in self.keywords:
+            indents = [0, 0]
+            for kw in keywords:
+                indents[0] = max(indents[0], len(kw.name))
+                indents[1] = max(indents[1], len(str(kw.used)))
+            for kw in keywords:
                 if self.filter_not_used and not kw.used:
                     continue
-                s += "    " + str(kw)
+                s += "    " + kw.to_str(indents=indents)
         return s
 
 
@@ -175,10 +192,11 @@ class Resource:
         self.imports = set()
         self.libraries = dict()
 
-        model = get_resource_model(str(path), data_only=True, curdir=str(path.cwd()))
+        model = get_model(str(path), data_only=True, curdir=str(path.cwd()))
         visitor = ResourceVisitor()
         visitor.visit(model)
         self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords)
+        self.has_tests = visitor.has_tests
         # set them from --variables and such
         variables = {"${/}": os.path.sep}
         for resource in visitor.resources:
@@ -220,11 +238,19 @@ class Resource:
         return str(self.path), self
 
     def __str__(self):
-        s = f"File: {self.path}\n"
-        if self.keywords:
+        file_type = "Suite" if self.has_tests else "Resource"
+        s = f"{file_type}: {self.name}\n"
+        if not self.keywords:
+            return s
+        keywords = [kw for kw in self.keywords]
+        if keywords:
+            indents = [0, 0]
+            for kw in keywords:
+                indents[0] = max(indents[0], len(kw.name))
+                indents[1] = max(indents[1], len(str(kw.used)))
             s += f"  Keywords:\n"
-            for kw in self.keywords:
-                s += "    " + str(kw)
+            for kw in keywords:
+                s += "    " + kw.to_str(indents=indents)
         return s
 
 
@@ -264,4 +290,4 @@ class Tree:
                 yield resource.get_resources()
 
     def __str__(self):
-        return self.name
+        return f"Directory: {self.name}"

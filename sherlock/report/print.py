@@ -2,15 +2,15 @@ import textwrap
 
 
 def log_directory(directory, log_handle, indent=""):
-    print(textwrap.indent(str(directory), indent) + "\n", file=log_handle)
+    print(textwrap.indent(str(directory), indent), file=log_handle)
     indent += "    "
     for resource in directory.children:
         if resource.type == "Tree":
             log_directory(resource, log_handle, indent)
         else:
-            print(textwrap.indent(str(resource), indent) + "\n", file=log_handle)
+            print(textwrap.indent(str(resource), indent), file=log_handle)
 
 
-def print_report(directory, name, log_handle):
-    print(name)
+def print_report(directory, log_handle):
+    print("", file=log_handle)
     log_directory(directory, log_handle)
