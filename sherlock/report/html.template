@@ -327,6 +327,7 @@ $(function() {
                             <th>Total elapsed time:</th>
                             <td>{{ directory.timings.total }}</td>
                         </tr>
+                        {%- if directory.keywords|length != 1 %}
                         <tr>
                             <th>Shortest execution time:</th>
                             <td>{{ directory.timings.min }}</td>
@@ -339,6 +340,7 @@ $(function() {
                             <th>Average execution time:</th>
                             <td>{{ directory.timings.avg }}</td>
                         </tr>
+                        {% endif -%}
                     </tbody>
                 </table>
             </div>
@@ -383,6 +385,7 @@ $(function() {
                                     <th>Total elapsed time:</th>
                                     <td>{{ keyword.timings.total }}</td>
                                 </tr>
+                                {%- if keyword.used != 1 %}
                                  <tr>
                                     <th>Shortest execution time:</th>
                                     <td>{{ keyword.timings.min }}</td>
@@ -395,6 +398,7 @@ $(function() {
                                     <th>Average execution time:</th>
                                     <td>{{ keyword.timings.avg }}</td>
                                 </tr>
+                                {% endif -%}
                             </tbody>
                         </table>
                     </div>

@@ -6,4 +6,6 @@ Resource    ..${/}resources${/}test.resource
 Test
     Python Keyword
     Robot Keyword
-    Robot Keyword 2
+    FOR  ${a}  IN RANGE  3
+        Robot Keyword 2
+    END

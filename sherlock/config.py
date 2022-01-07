@@ -44,6 +44,7 @@ class Config:
 
         self.set_parsed_opts(dict(**vars(parsed_args)))
         self.validate_output_path()
+        self.validate_report()
 
     def validate_output_path(self):
         if self.output_path is None:
@@ -54,6 +55,15 @@ class Config:
             raise SherlockFatalError(
                 f"Reading Robot Framework output file failed. No such file: '{self.output_path}'"
             ) from None
+
+    def validate_report(self):
+        if not self.report:
+            return
+        allowed = ("print", "html", "json")
+        for report in self.report:
+            if report not in allowed:
+                raise SherlockFatalError(f"Report '{report}' not recognized. "
+                                         f"Use comma separated list of values from: {', '.join(allowed)}")
 
     def set_root(self, parsed_args):
         self.root = find_project_root((getattr(parsed_args, "path", Path.cwd()),))
