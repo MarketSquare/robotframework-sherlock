@@ -120,9 +120,11 @@ class KeywordTimings:
     def __str__(self):
         s = f"Total elapsed time:      {self.total}\n"
         if self._count > 1:
-            s += f"Shortest execution time: {self.min}\n" \
-                 f"Longest execution time:  {self.max}\n" \
-                 f"Average execution time:  {self.avg}\n"
+            s += (
+                f"Shortest execution time: {self.min}\n"
+                f"Longest execution time:  {self.max}\n"
+                f"Average execution time:  {self.avg}\n"
+            )
         return s
 
 
