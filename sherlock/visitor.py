@@ -79,6 +79,6 @@ class StructureVisitor(SuiteVisitor):
             found[0].used += 1
             if self.from_output:
                 found[0].timings.add_timing(kw.elapsedtime)
-        if hasattr(kw, 'body'):
+        if hasattr(kw, "body"):
             kw.body.visit(self)
         kw.teardown.visit(self)
