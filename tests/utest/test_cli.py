@@ -57,3 +57,22 @@ class TestCli:
         ):
             config = Config()
             assert config.path == Path.cwd()
+
+    def test_invalid_report(self):
+        with patch.object(
+            sys,
+            "argv",
+            "sherlock --report print,invalid".split(),
+        ), pytest.raises(
+            SherlockFatalError, match="Report 'invalid' not recognized. Use comma separated list of values from: print, html, json"
+        ):
+            Config()
+
+    def test_default_report(self):
+        with patch.object(
+            sys,
+            "argv",
+            "sherlock".split(),
+        ):
+            config = Config()
+            assert config.report == ["print"]
