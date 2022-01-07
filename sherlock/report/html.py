@@ -2,7 +2,8 @@ from pathlib import Path
 
 from jinja2 import Template
 
-from sherlock.model import DIRECTORY_TYPE, RESOURCE_TYPE, LIBRARY_TYPE, KeywordTimings
+from sherlock.model import DIRECTORY_TYPE, RESOURCE_TYPE, LIBRARY_TYPE, SUITE_TYPE, KeywordTimings
+from sherlock.file_utils import INIT_EXT
 
 
 class KeywordResult:
@@ -18,7 +19,7 @@ class KeywordResult:
 class HtmlResultModel:
     def __init__(self, element_id, model):
         self.element_id = element_id
-        self.type = model.type.upper()
+        self.type = model.get_type().upper()
         self.name = model.name
         self.path = model.path
         self.show = "BuiltIn" not in self.name
@@ -30,7 +31,7 @@ class HtmlResultModel:
         self.fill_children(model)
 
     def fill_keywords(self, model):
-        if model.type not in (RESOURCE_TYPE, LIBRARY_TYPE):
+        if model.type not in (RESOURCE_TYPE, LIBRARY_TYPE, SUITE_TYPE) or not model.keywords:
             return
         self.timings = KeywordTimings()
         for index, kw in enumerate(model.keywords):
@@ -47,10 +48,19 @@ class HtmlResultModel:
                 )
             )
 
+    @staticmethod
+    def get_children_with_init_first(model):
+        children = [child for child in model.children]
+        for index, child in enumerate(children):
+            if child.name in INIT_EXT:
+                yield children.pop(index)
+        for child in children:
+            yield child
+
     def fill_children(self, model):
         if model.type != DIRECTORY_TYPE:
             return
-        for index, child in enumerate(model.children):
+        for index, child in enumerate(self.get_children_with_init_first(model)):
             new_id = f"{self.element_id}-r{index}"
             self.children.append(HtmlResultModel(new_id, child))
 

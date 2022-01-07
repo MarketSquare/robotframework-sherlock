@@ -5,6 +5,7 @@ from typing import Iterable, Iterator, Optional, List, Tuple
 from pathspec import PathSpec
 
 INCLUDE_EXT = frozenset({".robot", ".resource", ".py"})
+INIT_EXT = ("__init__.robot", "__init__.py")
 
 
 @lru_cache()

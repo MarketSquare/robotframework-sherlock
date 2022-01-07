@@ -12,7 +12,7 @@ from robot.running.testlibraries import TestLibrary
 from robot.utils import NormalizedDict, find_file
 
 from sherlock.complexity import ComplexityChecker
-from sherlock.file_utils import INCLUDE_EXT
+from sherlock.file_utils import INCLUDE_EXT, INIT_EXT
 
 
 DIRECTORY_TYPE = "Directory"
@@ -224,7 +224,7 @@ def _is_library_by_path(path):
 class File:
     def __init__(self, path):
         self.path = path
-        self.name = str(path)
+        self.name = str(Path(path).name)
         self.keywords = None
 
     def get_resources(self):
@@ -344,9 +344,13 @@ class Tree:
                 continue
             child = child.resolve()
             if child.is_dir():
-                child_tree = cls.from_directory(path=child, gitignore=gitignore)
-                if child_tree.children:  # if the directory is empty (no libraries or resources) skip it
-                    tree.children.append(child_tree)
+                # TODO check if __init__ inside
+                if tree.has_init(child):
+                    tree.children.append(Library(child))
+                else:
+                    child_tree = cls.from_directory(path=child, gitignore=gitignore)
+                    if child_tree.children:  # if the directory is empty (no libraries or resources) skip it
+                        tree.children.append(child_tree)
             elif child.is_file():
                 if child.suffix not in INCLUDE_EXT:
                     continue
@@ -355,6 +359,13 @@ class Tree:
                 else:
                     tree.children.append(Resource(child))
         return tree
+
+    @staticmethod
+    def has_init(directory):
+        return any(child.name == "__init__.py" for child in directory.iterdir())  # FIXME
+
+    def get_type(self):
+        return self.type
 
     def get_resources(self):
         for resource in self.children:
