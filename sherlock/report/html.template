@@ -312,6 +312,38 @@ $(function() {
                 {%- endif -%}
             </tbody>
         </table>
+        {%- if directory.timings is not none and directory.keywords|length > 0 %}
+        <div class="timings">
+            <div class="element-header">
+                <div class="element-header-left">
+                    <span class="name">Timings</span>
+                    <div class="element-header-toggle" title="Toggle visibility"></div>
+                </div>
+            </div>
+            <div class="children">
+                <table class="metadata">
+                    <tbody>
+                        <tr>
+                            <th>Total elapsed time:</th>
+                            <td>{{ directory.timings.total }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shortest execution time:</th>
+                            <td>{{ directory.timings.min }}</td>
+                        </tr>
+                        <tr>
+                            <th>Longest execution time:</th>
+                            <td>{{ directory.timings.max }}</td>
+                        </tr>
+                        <tr>
+                            <th>Average execution time:</th>
+                            <td>{{ directory.timings.avg }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif -%}
         {%- for keyword in directory.keywords %}
          <div id="{{ keyword.element_id }}" class="keyword">
             <div class="element-header">
@@ -333,9 +365,41 @@ $(function() {
                              <th>Complexity:</th>
                              <td>{{ keyword.complexity }}</td>
                          </tr>
-                        {%- endif -%}
+                         {%- endif -%}
                      </tbody>
                  </table>
+                {%- if keyword.used %}
+                <div class="timings">
+                    <div class="element-header">
+                        <div class="element-header-left">
+                            <span class="name">Timings</span>
+                            <div class="element-header-toggle" title="Toggle visibility"></div>
+                        </div>
+                    </div>
+                    <div class="children">
+                        <table class="metadata">
+                            <tbody>
+                                 <tr>
+                                    <th>Total elapsed time:</th>
+                                    <td>{{ keyword.timings.total }}</td>
+                                </tr>
+                                 <tr>
+                                    <th>Shortest execution time:</th>
+                                    <td>{{ keyword.timings.min }}</td>
+                                </tr>
+                                 <tr>
+                                    <th>Longest execution time:</th>
+                                    <td>{{ keyword.timings.max }}</td>
+                                </tr>
+                                 <tr>
+                                    <th>Average execution time:</th>
+                                    <td>{{ keyword.timings.avg }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif -%}
              </div>
     </div>
         {% endfor %}

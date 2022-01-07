@@ -46,12 +46,15 @@ class TestExternalLibrary:
         expected = Tree(
             name="TemplatedData",
             children=[
-                Tree(name="TemplatedData", keywords=[
-                    Keyword(name="Get Templated Data", used=0),
-                    Keyword(name="Get Templated Data From Path", used=2),
-                    Keyword(name="Normalize"),
-                    Keyword(name="Return Data With Type"),
-                ]),
+                Tree(
+                    name="TemplatedData",
+                    keywords=[
+                        Keyword(name="Get Templated Data", used=0),
+                        Keyword(name="Get Templated Data From Path", used=2),
+                        Keyword(name="Normalize"),
+                        Keyword(name="Return Data With Type"),
+                    ],
+                ),
             ],
         ).to_json()
         assert match_tree(expected, data)
