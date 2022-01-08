@@ -62,8 +62,10 @@ class Config:
         allowed = ("print", "html", "json")
         for report in self.report:
             if report not in allowed:
-                raise SherlockFatalError(f"Report '{report}' not recognized. "
-                                         f"Use comma separated list of values from: {', '.join(allowed)}")
+                raise SherlockFatalError(
+                    f"Report '{report}' not recognized. "
+                    f"Use comma separated list of values from: {', '.join(allowed)}"
+                )
 
     def set_root(self, parsed_args):
         self.root = find_project_root((getattr(parsed_args, "path", Path.cwd()),))
