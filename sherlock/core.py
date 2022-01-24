@@ -33,7 +33,7 @@ class Sherlock:
         self.packages.append(self.create_builtin_tree())
         self.packages.extend(self.map_resources())
 
-        code_visitor = StructureVisitor(self.resources, self.from_output)
+        code_visitor = StructureVisitor(self.resources, self.from_output, self.config.robot_settings)
         suite.visit(code_visitor)
         for error in code_visitor.errors:
             self.log(error)

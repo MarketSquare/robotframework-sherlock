@@ -109,6 +109,7 @@ class TestTomlParser:
             "log_output": None,
             "report": ["print", "html"],
             "path": ["file1.robot", "dir/"],
+            "variable": ["first:value", "second:value"]
         }
 
     def test_get_config_empty(self, path_to_test_data):

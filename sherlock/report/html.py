@@ -27,6 +27,7 @@ class HtmlResultModel:
         self.keywords = []
         self.timings = None
         self.status = "pass"
+        self.errors = model.errors
         self.fill_keywords(model)
         self.fill_children(model)
 

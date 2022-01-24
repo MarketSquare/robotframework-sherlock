@@ -21,6 +21,10 @@ table {
 th, td {
     vertical-align: top;
 }
+td {
+    display: table-cell;
+    vertical-align: inherit;
+}
 br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
@@ -40,6 +44,12 @@ a:hover, a:active {
     text-decoration: underline;
     color: #61c;
 }
+.message {
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 1.1em;
+}
+
 /* Headers */
 #header {
     width: 65em;
@@ -165,6 +175,10 @@ h2 {
 .label.skip, .label.warn {
     background-color: #fed84f;
     color: #000 !important;
+}
+.level {
+    width: 5em;
+    text-align: center;
 }
 .name {
     font-weight: bold;
@@ -312,6 +326,26 @@ $(function() {
                 {%- endif -%}
             </tbody>
         </table>
+        {%- if directory.errors|length > 0 %}
+        <div class="errors">
+            <div class="element-header">
+                <div class="element-header-left">
+                    <span class="name">Import errors:</span>
+                    <div class="element-header-toggle" title="Toggle visibility"></div>
+                </div>
+            </div>
+            <div class="children">
+                <table class="metadata">
+                    <tbody>
+                    {%- for error in directory.errors %}
+                        <td class="fail level"><span class="label fail">FAIL</span></td>
+                        <td class="message">{{ error}}</td>
+                    {% endfor -%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif -%}
         {%- if directory.timings is not none and directory.keywords|length > 0 %}
         <div class="timings">
             <div class="element-header">
