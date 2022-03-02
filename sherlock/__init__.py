@@ -15,5 +15,5 @@ def run_cli():
             "\nFatal exception occurred. You can create an issue at "
             "https://github.com/bhirsz/robotframework-sherlock/issues . Thanks!"  # TODO change url when migrate
         )
-        err.args = (err.args[0] + message,) + err.args[1:]
+        err.args = (str(err.args[0]) + message,) + err.args[1:]
         raise err

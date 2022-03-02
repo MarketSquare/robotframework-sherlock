@@ -4,15 +4,19 @@ import textwrap
 import math
 from pathlib import Path
 from typing import Optional
+
+import robot.errors
 from pathspec import PathSpec
 
 from robot.api import get_model
 from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
+from robot.variables import Variables
 from robot.utils import NormalizedDict, find_file
+from robot.errors import DataError
 
 from sherlock.complexity import ComplexityChecker
-from sherlock.file_utils import INCLUDE_EXT, INIT_EXT
+from sherlock.file_utils import INCLUDE_EXT
 
 
 DIRECTORY_TYPE = "Directory"
@@ -22,12 +26,20 @@ SUITE_TYPE = "Suite"
 
 
 class KeywordStats:
-    def __init__(self, name, node=None):
+    def __init__(self, name, parent, node=None):
         self.name = name
+        self.parent = parent
         self.used = 0
         self.node = node
         self.complexity = self.get_complexity()
         self.timings = KeywordTimings()
+
+    @property
+    def status(self):
+        # TODO fail (fail), warning statuses (skip)
+        if not self.used:
+            return "label"
+        return "pass"
 
     def __str__(self):
         s = f"{self.name}\n"
@@ -129,10 +141,12 @@ class KeywordTimings:
 
 
 class ResourceVisitor(ast.NodeVisitor):
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.normal_keywords = NormalizedDict(ignore="_")
         self.embedded_keywords = dict()
-        self.resources = set()
+        self.variables = Variables()
+        self.resources = []
         self.libraries = dict()
         self.has_tests = False
 
@@ -142,17 +156,23 @@ class ResourceVisitor(ast.NodeVisitor):
     def visit_Keyword(self, node):  # noqa
         embedded = EmbeddedArguments(node.name)
         if embedded:
-            self.embedded_keywords[node.name] = (KeywordStats(node.name, node=node), embedded.name)
+            self.embedded_keywords[node.name] = (KeywordStats(node.name, parent=self.parent, node=node), embedded.name)
         else:
-            self.normal_keywords[node.name] = KeywordStats(node.name, node=node)  # TODO: handle duplications
+            self.normal_keywords[node.name] = KeywordStats(
+                node.name, parent=self.parent, node=node
+            )  # TODO: handle duplications
 
     def visit_ResourceImport(self, node):  # noqa
         if node.name:
-            self.resources.add(node.name)
+            self.resources.append(node.name)
 
     def visit_LibraryImport(self, node):  # noqa
         if node.name:
             self.libraries[(node.name, node.alias)] = node.args
+
+    def visit_Variable(self, node):  # noqa
+        if node.name:
+            self.variables[node.name] = node.value[0]  # FIXME arrays and such..by default ${VAR}  1 -> 1 is tuple
 
 
 class KeywordStore:
@@ -182,10 +202,10 @@ class KeywordStore:
 
 
 class KeywordLibraryStore(KeywordStore):
-    def __init__(self, test_library):
+    def __init__(self, test_library, parent):
         normal = NormalizedDict(ignore="_")
         for kw in test_library.handlers._normal:
-            normal[kw] = KeywordStats(kw)
+            normal[kw] = KeywordStats(kw, parent=parent)
         embedded = {handler.name: (KeywordStats(handler.name, handler)) for handler in test_library.handlers._embedded}
         super().__init__(normal, embedded)
 
@@ -195,8 +215,8 @@ class KeywordLibraryStore(KeywordStore):
 
 
 class KeywordResourceStore(KeywordStore):
-    def __init__(self, normal, embedded):
-        keyword_stats = {name: KeywordStats(name) for name in normal.values()}
+    def __init__(self, normal, embedded, parent):
+        keyword_stats = {name: KeywordStats(name, parent) for name in normal.values()}
         for kw_stat, pattern in embedded.values():
             keyword_stats[kw_stat.name] = kw_stat
         super().__init__(normal, embedded)
@@ -228,6 +248,7 @@ class File:
         self.path = path
         self.name = str(Path(path).name)
         self.keywords = None
+        self.errors = set()
 
     def get_resources(self):
         return str(self.path), self
@@ -237,6 +258,9 @@ class File:
 
     def __str__(self):
         s = f"{self.get_type()}: {self.name}\n"
+        if self.errors:
+            s += "Import errors:\n"
+            s += textwrap.indent("".join(self.errors), "    ")
         if not self.keywords:
             return s
         keywords = [kw for kw in self.keywords]
@@ -264,18 +288,32 @@ class Library(File):
     def get_type(self):
         return self.type
 
-    def load_library(self, args=None):
+    def load_library(self, args=None, scope_variables=None):
         if self.keywords:
             return
         # TODO handle exceptions (not enough args etc)
+        error = False
+        if scope_variables is not None and args:
+            replaced_args = []
+            for arg in args:
+                try:
+                    replaced_args.append(scope_variables.replace_string(arg))
+                except robot.errors.VariableError as err:
+                    error = True
+                    self.errors.add(f"Failed to load library with an error: {err} You can provide Robot variables "
+                                    f"to Sherlock using -v/--variable name:value cli option.\n")
+        else:
+            replaced_args = args
+        if error:
+            return
         name = str(self.path)
-        library = TestLibrary(name, args)
+        library = TestLibrary(name, replaced_args)
         self.name = library.orig_name
-        self.keywords = KeywordLibraryStore(library)
+        self.keywords = KeywordLibraryStore(library, name)
 
     def search(self, name, *args):
         if not self.keywords:
-            return  # TODO lib not init
+            return []
         return self.keywords.find_kw(name)
 
 
@@ -285,47 +323,65 @@ class Resource(File):
         self.type = RESOURCE_TYPE
         self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
-        self.resources = dict()
-        self.imports = set()
-        self.libraries = dict()
 
         model = get_model(str(path), data_only=True, curdir=str(path.cwd()))
-        visitor = ResourceVisitor()
+        visitor = ResourceVisitor(str(path))
         visitor.visit(model)
-        self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords)
+        self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords, str(path))
         self.has_tests = visitor.has_tests
-        # set them from --variables and such
-        variables = {"${/}": os.path.sep}
-        for resource in visitor.resources:
-            for var, value in variables.items():
-                resource = resource.replace(var, value)
-            self.imports.add(str(Path(self.directory, resource).resolve()))
-        for (library, alias), args in visitor.libraries.items():
-            for var, value in variables.items():  # TODO handle with Variables
-                library = library.replace(var, value)
-            library = _normalize_library_path(library)
-            library = _get_library_name(library, self.directory)
-            self.libraries[(library, alias)] = args
+        self.variables = visitor.variables
+        self.current_variables = None
+
+        self.resources = visitor.resources
+        self.libraries = visitor.libraries
+        self.imported_resources, self.imported_libraries = [], []
 
     def get_type(self):
         return SUITE_TYPE if self.has_tests else RESOURCE_TYPE
 
+    def init_imports(self, namespace):
+        """Called on start of every suite to resolve imports"""
+        self.imported_resources, self.imported_libraries = [], []
+
+        self.current_variables = Variables()
+        self.current_variables.update(namespace if hasattr(namespace, "store") else namespace.current)  # FIXME
+        self.current_variables.update(self.variables.copy())
+
+        for resource in self.resources:
+            try:
+                resource = self.current_variables.replace_string(resource)
+            except DataError as err:
+                pass
+                # TODO
+                # self._raise_replacing_vars_failed(import_setting, err)
+            self.imported_resources.append(str(Path(self.directory, resource).resolve()))  # FIXME
+        for (lib, alias), args in self.libraries.items():
+            library = self.current_variables.replace_string(lib)
+            library = _normalize_library_path(library)
+            library = _get_library_name(library, self.directory)
+            self.imported_libraries.append((library, alias, args))
+
     def search(self, name, resources, libname):
-        found = resources["BuiltIn"].search(name, resources)
-        if found:
-            return found
+        found = []
         if not libname or Path(self.path).stem == libname:
             found += self.keywords.find_kw(name)
-
-        for imported in self.imports:
-            if imported in resources:
-                found += resources[imported].search(name, resources, libname)
-        for (lib, alias), args in self.libraries.items():
-            if lib in resources:
-                resources[lib].load_library(args)
-                if not libname or (alias and alias == libname) or (not alias and resources[lib].name == libname):
-                    found += resources[lib].search(name, resources)
-        return found
+            if found:
+                return found
+        for resource in self.imported_resources:
+            if resource in resources:
+                resources[resource].init_imports(self.current_variables)
+                found += resources[resource].search(name, resources, libname)
+                if found:
+                    return found
+        for lib, alias, args in self.imported_libraries:
+            if lib not in resources:
+                continue
+            resources[lib].load_library(args, self.current_variables)
+            if not libname or (alias and alias == libname) or (not alias and resources[lib].name == libname):
+                found += resources[lib].search(name, resources)
+        if found:
+            return found
+        return resources["BuiltIn"].search(name, resources)
 
 
 class Tree:
@@ -333,6 +389,7 @@ class Tree:
         self.name = name
         self.type = DIRECTORY_TYPE
         self.path = ""
+        self.errors = set()
         self.children = []
 
     @classmethod
