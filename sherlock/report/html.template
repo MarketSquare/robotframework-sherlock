@@ -305,13 +305,13 @@ $(function() {
 {%- if directory.show -%}
 <div id="{{ directory.element_id }}" class="directory">
     <div class="element-header">
-        <div class="element-header-left">
+        <div class="element-header-left{% if directory.element_id != "d0" %} closed{% endif %}">
             <span class="label {{ directory.status }}">{{ directory.type }}</span>
             <span class="name">{{ directory.name }}</span>
             <div class="element-header-toggle" title="Toggle visibility"></div>
         </div>
     </div>
-    <div class="children">
+    <div class="children"{% if directory.element_id != "d0" %} style="display: none;"{% endif %}>
         <table class="metadata">
             <tbody>
                 <tr>
@@ -329,7 +329,7 @@ $(function() {
         {%- if directory.errors|length > 0 %}
         <div class="errors">
             <div class="element-header">
-                <div class="element-header-left">
+                <div class="element-header-left closed">
                     <span class="name">Import errors:</span>
                     <div class="element-header-toggle" title="Toggle visibility"></div>
                 </div>
@@ -349,12 +349,12 @@ $(function() {
         {%- if directory.timings is not none and directory.keywords|length > 0 %}
         <div class="timings">
             <div class="element-header">
-                <div class="element-header-left">
+                <div class="element-header-left closed">
                     <span class="name">Timings</span>
                     <div class="element-header-toggle" title="Toggle visibility"></div>
                 </div>
             </div>
-            <div class="children">
+            <div class="children" style="display: none;">
                 <table class="metadata">
                     <tbody>
                         <tr>
@@ -383,13 +383,13 @@ $(function() {
         {%- for keyword in directory.keywords %}
          <div id="{{ keyword.element_id }}" class="keyword">
             <div class="element-header">
-                <div class="element-header-left">
+                <div class="element-header-left closed">
                     <span class="label {{ keyword.status }}">KEYWORD</span>
                     <span class="name">{{ keyword.name }}</span>
                     <div class="element-header-toggle" title="Toggle visibility"></div>
                 </div>
             </div>
-             <div class="children">
+             <div class="children" style="display: none;">
                  <table class="metadata">
                      <tbody>
                         <tr>
@@ -407,12 +407,12 @@ $(function() {
                 {%- if keyword.used %}
                 <div class="timings">
                     <div class="element-header">
-                        <div class="element-header-left">
+                        <div class="element-header-left closed">
                             <span class="name">Timings</span>
                             <div class="element-header-toggle" title="Toggle visibility"></div>
                         </div>
                     </div>
-                    <div class="children">
+                    <div class="children" style="display: none;">
                         <table class="metadata">
                             <tbody>
                                  <tr>

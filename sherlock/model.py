@@ -34,6 +34,13 @@ class KeywordStats:
         self.complexity = self.get_complexity()
         self.timings = KeywordTimings()
 
+    @property
+    def status(self):
+        # TODO fail (fail), warning statuses (skip)
+        if not self.used:
+            return "label"
+        return "pass"
+
     def __str__(self):
         s = f"{self.name}\n"
         s += f"  Used: {self.used}\n"
@@ -358,6 +365,8 @@ class Resource(File):
         found = []
         if not libname or Path(self.path).stem == libname:
             found += self.keywords.find_kw(name)
+            if found:
+                return found
         for resource in self.imported_resources:
             if resource in resources:
                 resources[resource].init_imports(self.current_variables)
@@ -372,8 +381,7 @@ class Resource(File):
                 found += resources[lib].search(name, resources)
         if found:
             return found
-        found = resources["BuiltIn"].search(name, resources)
-        return found
+        return resources["BuiltIn"].search(name, resources)
 
 
 class Tree:
