@@ -1,15 +1,20 @@
 # Sherlock
 The tool for analyzing Robot Framework code in terms of not used code, code complexity or performance issues.
 
-The tool is in the alpha state. If you find anything unexpected, or you have idea for improvements 
-not listed in Github issues already please open an issue.
+> **Note**
+> 
+> The tool is in the ***Alpha*** state, which means it may be unstable and should be used at your own risk. Some 
+> features may be broken and there are still many things to be developed. If you find anything unexpected, or you have ideas for improvements 
+> not listed in GitHub issues, please open an new issue.
 
 ## Installation
-You can install Sherlock by running in the root of the project:
+Currently, you need to install Sherlock from the source code. In order to do so, first clone the repository, and 
+run following command inside `robotframework-sherlock` directory:
 ```commandline
-pip install -e .
+pip install .
 ```
 
+Add `-e` flag after installation if you want Sherlock to reload installed version after each code update (performed via `git pull`).
 ## Usage
 
 Run with:
