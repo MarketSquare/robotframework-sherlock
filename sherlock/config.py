@@ -3,6 +3,7 @@ from typing import List
 from pathlib import Path
 
 import toml
+from robot.conf import RobotSettings
 
 from sherlock.file_utils import find_project_root, find_file_in_project_root, get_gitignore
 from sherlock.exceptions import SherlockFatalError
@@ -24,12 +25,16 @@ class Config:
         self.output_path = None
         self.log_output = None
         self.report: List[str] = ["print"]
+        self.variable = []
+        self.variablefile = []
+        self.robot_settings = None
         self.include_builtin = False
         self.root = Path.cwd()
         self.default_gitignore = None
         self.resource: List[str] = []
         if from_cli:
             self.parse_cli()
+        self.init_variables()
 
     def parse_cli(self):
         parser = self._create_parser()
@@ -107,6 +112,21 @@ class Config:
             help="Include BuiltIn libraries in analysis",
             action="store_true",
         )
+        parser.add_argument(
+            "-v",
+            "--variable",
+            help="Set Robot variable in Sherlock namespace",
+            metavar="name:value",
+            action="append"
+        )
+        parser.add_argument(
+            "-V",
+            "--variablefile",
+            help="Set Robot variable in Sherlock namespace from Python or YAML file",
+            metavar="path",
+            action="append"
+        )
+
         return parser
 
     def set_parsed_opts(self, namespace):
@@ -124,6 +144,9 @@ class Config:
             if not config_path.is_file():
                 return {}
         return TomlConfigParser(config_path=config_path, look_up=self.__dict__).get_config()
+
+    def init_variables(self):
+        self.robot_settings = RobotSettings({"variable": self.variable, "variablefile": self.variablefile})
 
 
 class TomlConfigParser:

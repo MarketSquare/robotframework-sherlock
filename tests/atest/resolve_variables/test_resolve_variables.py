@@ -16,8 +16,7 @@ def run_with_tests():
     return "test.robot"
 
 
-@pytest.mark.skip(reason="Library import with sleeps for timing tests")
-class TestLibraryFromResource:
+class TestResolveVariables:
     def test(self, path_to_test_data):
         robot_output = path_to_test_data / "output.xml"
         run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"])
@@ -25,15 +24,8 @@ class TestLibraryFromResource:
         expected = Tree(
             name="test_data",
             children=[
-                Tree(name="imports.resource", keywords=[]),
-                Tree(
-                    name="MyStuff",
-                    keywords=[
-                        Keyword(name="My Keyword", used=1),
-                        Keyword(name="Not Used", used=0),
-                        Keyword(name="Third Keyword", used=2),
-                    ],
-                ),
+                Tree(name="Library1", keywords=[Keyword(name="Keyword 1", used=1)]),
+                Tree(name="Library2.py", keywords=[]),
                 Tree(name="test.robot", keywords=[]),
             ],
         ).to_json()

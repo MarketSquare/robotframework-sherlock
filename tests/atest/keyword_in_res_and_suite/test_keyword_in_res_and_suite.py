@@ -16,8 +16,7 @@ def run_with_tests():
     return "test.robot"
 
 
-@pytest.mark.skip(reason="Library import with sleeps for timing tests")
-class TestLibraryFromResource:
+class TestKeywordInResAndSuite:
     def test(self, path_to_test_data):
         robot_output = path_to_test_data / "output.xml"
         run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"])
@@ -25,16 +24,8 @@ class TestLibraryFromResource:
         expected = Tree(
             name="test_data",
             children=[
-                Tree(name="imports.resource", keywords=[]),
-                Tree(
-                    name="MyStuff",
-                    keywords=[
-                        Keyword(name="My Keyword", used=1),
-                        Keyword(name="Not Used", used=0),
-                        Keyword(name="Third Keyword", used=2),
-                    ],
-                ),
-                Tree(name="test.robot", keywords=[]),
+                Tree(name="kw.resource", keywords=[Keyword(name="Ambiguous Name", used=1)]),
+                Tree(name="test.robot", keywords=[Keyword(name="Ambiguous Name", used=1)]),
             ],
         ).to_json()
         assert match_tree(expected, data)

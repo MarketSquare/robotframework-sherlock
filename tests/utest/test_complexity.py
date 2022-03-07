@@ -11,18 +11,18 @@ class TestComplexity:
     )
     def test_complexity(self, string_model, complexity):
         model = get_model(string_model)
-        kw_stat = KeywordStats(name="Dummy", node=model)
+        kw_stat = KeywordStats(name="Dummy", parent="Dummy", node=model)
         assert kw_stat.complexity == complexity
 
     def test_complexity_without_model(self):
-        kw_stat = KeywordStats(name="Dummy", node=None)
+        kw_stat = KeywordStats(name="Dummy", parent="Dummy", node=None)
         assert kw_stat.complexity is None
 
     def test_complexity_print(self):
         model = get_model(model_1complexity)
-        kw_stat = KeywordStats(name="Dummy", node=model)
+        kw_stat = KeywordStats(name="Dummy", parent="Dummy", node=model)
         assert "Dummy\n  Used: 0\n  Complexity: 1\n" == str(kw_stat)
 
     def test_complexity_without_model_print(self):
-        kw_stat = KeywordStats(name="Dummy", node=None)
+        kw_stat = KeywordStats(name="Dummy", parent="Dummy", node=None)
         assert "Dummy\n  Used: 0\n" == str(kw_stat)

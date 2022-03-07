@@ -1,3 +1,4 @@
+from itertools import chain
 from pathlib import Path
 
 from jinja2 import Template
@@ -26,9 +27,21 @@ class HtmlResultModel:
         self.children = []
         self.keywords = []
         self.timings = None
-        self.status = "pass"
+        self.errors = model.errors
         self.fill_keywords(model)
         self.fill_children(model)
+
+    @property
+    def status(self):
+        status = "pass"
+        for child in chain(self.keywords, self.children):
+            if child.status == "fail":
+                return "fail"
+            elif child.status == "skip":
+                status = "skip"
+            elif child.status == "label" and status == "pass":
+                status = "label"
+        return status
 
     def fill_keywords(self, model):
         if model.type not in (RESOURCE_TYPE, LIBRARY_TYPE, SUITE_TYPE) or not model.keywords:
@@ -43,7 +56,7 @@ class HtmlResultModel:
                     name=kw.name,
                     used=kw.used,
                     complexity=kw.complexity,
-                    status="pass",
+                    status=kw.status,
                     timings=kw.timings,
                 )
             )
