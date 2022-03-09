@@ -300,8 +300,10 @@ class Library(File):
                     replaced_args.append(scope_variables.replace_string(arg))
                 except robot.errors.VariableError as err:
                     error = True
-                    self.errors.add(f"Failed to load library with an error: {err} You can provide Robot variables "
-                                    f"to Sherlock using -v/--variable name:value cli option.\n")
+                    self.errors.add(
+                        f"Failed to load library with an error: {err} You can provide Robot variables "
+                        f"to Sherlock using -v/--variable name:value cli option.\n"
+                    )
         else:
             replaced_args = args
         if error:

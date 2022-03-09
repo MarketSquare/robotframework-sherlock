@@ -22,7 +22,7 @@ class CommaSeparated(argparse.Action):
 class Config:
     def __init__(self, from_cli=True):
         self.path = Path.cwd()
-        self.output_path = None
+        self.output = None
         self.log_output = None
         self.report: List[str] = ["print"]
         self.variable = []
@@ -48,17 +48,17 @@ class Config:
             self.set_parsed_opts(default)
 
         self.set_parsed_opts(dict(**vars(parsed_args)))
-        self.validate_output_path()
+        self.validate_output()
         self.validate_report()
 
-    def validate_output_path(self):
-        if self.output_path is None:
-            output_path = (self.path if self.path.is_dir() else self.path.parent) / ROBOT_DEFAULT_OUTPUT
-            if output_path.is_file():  # TODO document this
-                self.output_path = output_path
-        elif not self.output_path.is_file():
+    def validate_output(self):
+        if self.output is None:
+            output = (self.path if self.path.is_dir() else self.path.parent) / ROBOT_DEFAULT_OUTPUT
+            if output.is_file():  # TODO document this
+                self.output = output
+        elif not self.output.is_file():
             raise SherlockFatalError(
-                f"Reading Robot Framework output file failed. No such file: '{self.output_path}'"
+                f"Reading Robot Framework output file failed. No such file: '{self.output}'"
             ) from None
 
     def validate_report(self):
@@ -87,46 +87,48 @@ class Config:
         parser.add_argument(
             "path", metavar="SOURCE", default=self.path, nargs="?", type=Path, help="Path to source code"
         )
-        parser.add_argument("--resource", action="append", help="Path/name of resource to be included in analysis")
         parser.add_argument(
-            "--output-path",
+            "-o",
+            "--output",
             type=Path,
             help="Path to Robot Framework output file",
         )
         parser.add_argument(
-            "--log-output",
-            type=argparse.FileType("w"),
-            help="Path to output log",
+            "-r",
+            "--resource", action="append", help="Path/name of the library or resource to be included in analysis"
         )
         parser.add_argument(
+            "-rp",
             "--report",
             action=CommaSeparated,
-            help="Report types",
+            help="Generate reports after analysis. Use comma separated list for multiple reports. "
+            "Available reports: print (default), html, json",
         )
         parser.add_argument(
+            "-c",
             "--config",
             help="Path to TOML configuration file",
         )
         parser.add_argument(
-            "--include-builtin",
-            help="Include BuiltIn libraries in analysis",
-            action="store_true",
-        )
-        parser.add_argument(
-            "-v",
-            "--variable",
-            help="Set Robot variable in Sherlock namespace",
-            metavar="name:value",
-            action="append"
+            "-v", "--variable", help="Set Robot variable in Sherlock namespace", metavar="name:value", action="append"
         )
         parser.add_argument(
             "-V",
             "--variablefile",
             help="Set Robot variable in Sherlock namespace from Python or YAML file",
             metavar="path",
-            action="append"
+            action="append",
         )
-
+        parser.add_argument(
+            "--include-builtin",
+            help="Use this flag to include BuiltIn libraries in analysis",
+            action="store_true",
+        )
+        parser.add_argument(
+            "--log-output",
+            type=argparse.FileType("w"),
+            help="Path to output log",
+        )
         return parser
 
     def set_parsed_opts(self, namespace):
@@ -175,7 +177,7 @@ class TomlConfigParser:
                 read_config[key] = value.split(",") if isinstance(value, str) else value
             elif key == "config":
                 raise SherlockFatalError("Nesting configuration files is not allowed")
-            elif key == "output_path":
+            elif key == "output":
                 read_config[key] = Path(value)
             elif key == "include_builtin":
                 read_config[key] = str(value).lower() in ("true", "1", "yes", "t", "y")  # TODO tests

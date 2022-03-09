@@ -15,7 +15,7 @@ class Sherlock:
         self.resources = dict()
         self.directory = None
         self.packages: List[Tree] = []
-        self.from_output = bool(self.config.output_path)
+        self.from_output = bool(self.config.output)
 
     def run(self):
         self.log("Sherlock analysis of Robot Framework code:\n")
@@ -23,8 +23,8 @@ class Sherlock:
         self.log(f"Using {root.resolve()} as source repository")
 
         if self.from_output:
-            suite = ExecutionResult(self.config.output_path).suite
-            self.log(f"Loaded {self.config.output_path.resolve()} output file")
+            suite = ExecutionResult(self.config.output).suite
+            self.log(f"Loaded {self.config.output.resolve()} output file")
         else:
             suite = TestSuiteBuilder().build(self.config.path)
 
