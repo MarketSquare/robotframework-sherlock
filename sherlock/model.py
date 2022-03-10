@@ -14,6 +14,7 @@ from robot.running.testlibraries import TestLibrary
 from robot.variables import Variables
 from robot.utils import NormalizedDict, find_file
 from robot.errors import DataError
+from tabulate import tabulate
 
 from sherlock.complexity import ComplexityChecker
 from sherlock.file_utils import INCLUDE_EXT
@@ -42,6 +43,7 @@ class KeywordStats:
         return "pass"
 
     def __str__(self):
+        # TODO reduce since resource prints table now
         s = f"{self.name}\n"
         s += f"  Used: {self.used}\n"
         if self.complexity:
@@ -130,14 +132,9 @@ class KeywordTimings:
         return self.__add__(other)
 
     def __str__(self):
-        s = f"Total elapsed time:      {self.total}\n"
-        if self._count > 1:
-            s += (
-                f"Shortest execution time: {self.min}\n"
-                f"Longest execution time:  {self.max}\n"
-                f"Average execution time:  {self.avg}\n"
-            )
-        return s
+        cols = [[self.total, self.min, self.max, self.avg]]
+        headers = ["Total elapsed", "Shortest execution", "Longest execution", "Average execution"]
+        return tabulate(cols, headers=headers, tablefmt="plain") + "\n"
 
 
 class ResourceVisitor(ast.NodeVisitor):
@@ -265,15 +262,25 @@ class File:
             return s
         keywords = [kw for kw in self.keywords]
         if keywords:
-            timings = KeywordTimings()
-            for kw in keywords:
-                if kw.used:
-                    timings += kw.timings
+            timings = sum((kw.timings for kw in keywords if kw.used), KeywordTimings())
             s += "  Timings:\n"
             s += textwrap.indent(str(timings), "    ")
-            s += f"  Keywords:\n"
+            s += f"\n  Keywords:\n"
+            # FIXME Timings (and are optional too)
+            has_complexity = any(kw.complexity for kw in keywords)
+            kw_table = []
             for kw in keywords:
-                s += textwrap.indent(str(kw), "    ")
+                row = [kw.name, kw.used]
+                if has_complexity:
+                    row.append(kw.complexity)
+                row.append(kw.timings.total if kw.used else "")
+                kw_table.append(row)
+            headers = ["Keyword", "Executions"]
+            if has_complexity:
+                headers.append("Complexity")
+            headers.append("Elapsed")
+            table = tabulate(kw_table, headers=headers, tablefmt="pretty", colalign=("left",))
+            s += textwrap.indent(table, "    ")
         return s
 
 
@@ -300,8 +307,10 @@ class Library(File):
                     replaced_args.append(scope_variables.replace_string(arg))
                 except robot.errors.VariableError as err:
                     error = True
-                    self.errors.add(f"Failed to load library with an error: {err} You can provide Robot variables "
-                                    f"to Sherlock using -v/--variable name:value cli option.\n")
+                    self.errors.add(
+                        f"Failed to load library with an error: {err} You can provide Robot variables "
+                        f"to Sherlock using -v/--variable name:value cli option.\n"
+                    )
         else:
             replaced_args = args
         if error:

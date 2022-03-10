@@ -17,17 +17,20 @@ pip install .
 Add `-e` flag after installation if you want Sherlock to reload installed version after each code update (performed via `git pull`).
 ## Usage
 
-Run with:
+Sherlock can prepare analysis based on your source code alone. However, it's currently highly recommended to also include
+output of test execution.
+
+Run Sherlock with:
 ```commandline
-sherlock --output-path <path to output.xml file> <path to source code repository>
+sherlock --output <path to output.xml file> <path to source code repository>
 ```
 
 To analyze external library/resource use ``--resource`` option:
 ```commandline
-sherlock --output-path output.xml --resource SeleniumLibrary src/
+sherlock --output output.xml --resource SeleniumLibrary src/
 ```
 ```commandline
-sherlock --output-path output.xml --resource external_repository_used_in_tests/ src/
+sherlock --output output.xml --resource external_repository_used_in_tests/ src/
 ```
 
 ## Reports

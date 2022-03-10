@@ -33,11 +33,11 @@ class TestConfig:
         with tempfile.NamedTemporaryFile() as fp, patch.object(
             sys,
             "argv",
-            f"sherlock --output-path {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path(fp.name)
+            assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
 
@@ -45,22 +45,22 @@ class TestConfig:
         with tempfile.NamedTemporaryFile() as fp, working_directory(Path.home()), patch.object(
             sys,
             "argv",
-            f"sherlock --output-path {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path(fp.name)
+            assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
 
     def test_load_args_from_cli_overwrite_config(self, path_to_test_data):
         config_dir = path_to_test_data / "configs" / "pyproject"
         with tempfile.NamedTemporaryFile() as fp, working_directory(config_dir), patch.object(
-            sys, "argv", f"sherlock --output-path {fp.name} path/to/directory".split()
+            sys, "argv", f"sherlock --output {fp.name} path/to/directory".split()
         ):
             config = Config()
             assert config.path == Path("path/to/directory")
-            assert config.output_path == Path(fp.name)
+            assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["print", "html"]
 
@@ -105,11 +105,11 @@ class TestTomlParser:
         assert isinstance(config["log_output"], io.TextIOWrapper)
         config["log_output"] = None
         assert config == {
-            "output_path": Path("output.xml"),
+            "output": Path("output.xml"),
             "log_output": None,
             "report": ["print", "html"],
             "path": ["file1.robot", "dir/"],
-            "variable": ["first:value", "second:value"]
+            "variable": ["first:value", "second:value"],
         }
 
     def test_get_config_empty(self, path_to_test_data):
@@ -138,6 +138,6 @@ class TestTomlParser:
         with pytest.raises(SherlockFatalError) as err:
             TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
         assert (
-            rf"Failed to decode {config_path}: This float doesn't have a leading digit (line 3 column 1 char 43)"
+            rf"Failed to decode {config_path}: This float doesn't have a leading digit (line 3 column 1 char 38)"
             in err.value.args[0]
         )

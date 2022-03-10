@@ -11,17 +11,17 @@ from sherlock.exceptions import SherlockFatalError
 
 
 class TestCli:
-    def test_invalid_output_path(self):
+    def test_invalid_output(self):
         with patch.object(
             sys,
             "argv",
-            "sherlock --output-path idontexist.xml --report html path/to/directory".split(),
+            "sherlock --output idontexist.xml --report html path/to/directory".split(),
         ), pytest.raises(
             SherlockFatalError, match="Reading Robot Framework output file failed. No such file: 'idontexist.xml'"
         ):
             Config()
 
-    def test_no_output_path(self):
+    def test_no_output(self):
         with patch.object(
             sys,
             "argv",
@@ -29,16 +29,16 @@ class TestCli:
         ):
             Config()
 
-    def test_output_path(self):
+    def test_output(self):
         with tempfile.NamedTemporaryFile() as fp, patch.object(
             sys,
             "argv",
-            f"sherlock --output-path {fp.name} .".split(),
+            f"sherlock --output {fp.name} .".split(),
         ):
             config = Config()
-            assert config.output_path == Path(fp.name)
+            assert config.output == Path(fp.name)
 
-    def test_default_output_path(self):
+    def test_default_output(self):
         with tempfile.NamedTemporaryFile() as fp, patch.object(
             sherlock.config, "ROBOT_DEFAULT_OUTPUT", fp.name
         ), patch.object(
@@ -47,7 +47,7 @@ class TestCli:
             f"sherlock {Path(fp.name).parent}".split(),
         ):
             config = Config()
-            assert config.output_path == config.path / fp.name
+            assert config.output == config.path / fp.name
 
     def test_default_source(self):
         with patch.object(
