@@ -12,8 +12,8 @@ class TestNestedModules(AcceptanceTest):
             name="test_data",
             res_type="Directory",
             children=[
-                Tree(name="pages", res_type="Library", keywords=[]),
                 Tree(name="pages", res_type="Directory", children=[
+                    Tree(name="pages", res_type="Library", keywords=[]),
                     Tree(name="Page1", res_type="Library", keywords=[Keyword(name="Keyword 1", used=1)]),
                     Tree(name="Page2", res_type="Library", keywords=[Keyword(name="Keyword 2", used=1), Keyword(name="Keyword 3", used=0)])
                 ]),

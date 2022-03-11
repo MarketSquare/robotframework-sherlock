@@ -412,12 +412,15 @@ class Tree:
                 continue
             child = child.resolve()
             if child.is_dir():
-                # TODO check if __init__ inside
-                if tree.has_init(child):
-                    tree.children.append(Library(child))
+                library_init = Library(child) if tree.has_init(child) else None
+
                 child_tree = cls.from_directory(path=child, gitignore=gitignore)
                 if child_tree.children:  # if the directory is empty (no libraries or resources) skip it
+                    if library_init:
+                        child_tree.children.append(library_init)
                     tree.children.append(child_tree)
+                elif library_init:
+                    tree.children.append(library_init)
             elif child.is_file():
                 if child.suffix not in INCLUDE_EXT or child.name == "__init__.py":
                     continue
