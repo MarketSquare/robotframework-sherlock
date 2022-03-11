@@ -1,22 +1,11 @@
-import json
 from pathlib import Path
 
-import pytest
-
-from .. import run_sherlock, get_output, match_tree, Tree, Keyword
+from .. import run_sherlock, AcceptanceTest
 
 
-@pytest.fixture(scope="class")
-def path_to_test_data():
-    return Path(Path(__file__).parent, "test_data")
+class TestComplicatedStructure(AcceptanceTest):
+    ROOT = Path(Path(__file__).parent, "test_data")
+    TEST_PATH = "tests"
 
-
-@pytest.fixture(scope="class")
-def run_with_tests():
-    return "tests"
-
-
-class TestComplicatedStructure:
-    def test(self, path_to_test_data):
-        robot_output = path_to_test_data / "output.xml"
-        run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["html"])
+    def test(self):
+        run_sherlock(robot_output=self.ROOT / "output.xml", source=self.ROOT, report=["html"])
