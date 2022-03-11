@@ -1,26 +1,13 @@
-import json
 from pathlib import Path
 
-import pytest
-
-from .. import run_sherlock, get_output, match_tree, Tree, Keyword
+from .. import Tree, Keyword, AcceptanceTest
 
 
-@pytest.fixture(scope="class")
-def path_to_test_data():
-    return Path(Path(__file__).parent, "test_data")
+class TestResolveVariables(AcceptanceTest):
+    ROOT = Path(Path(__file__).parent, "test_data")
 
-
-@pytest.fixture(scope="class")
-def run_with_tests():
-    return "test.robot"
-
-
-class TestResolveVariables:
-    def test(self, path_to_test_data):
-        robot_output = path_to_test_data / "output.xml"
-        run_sherlock(robot_output=robot_output, source=path_to_test_data, report=["json"])
-        data = get_output("sherlock_test_data.json")
+    def test(self):
+        data = self.run_sherlock()
         expected = Tree(
             name="test_data",
             children=[
@@ -28,5 +15,5 @@ class TestResolveVariables:
                 Tree(name="Library2.py", keywords=[]),
                 Tree(name="test.robot", keywords=[]),
             ],
-        ).to_json()
-        assert match_tree(expected, data)
+        )
+        self.should_match_tree(expected, data)
