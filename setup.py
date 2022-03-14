@@ -23,7 +23,7 @@ Topic :: Utilities
 Intended Audience :: Developers
 """.strip().splitlines()
 KEYWORDS = "robotframework automation testautomation testing qa"
-DESCRIPTION = "Test framework for API with usage of Robot Framework"
+DESCRIPTION = "Robot Framework code analysis tool"
 
 setup(
     name=f"robotframework-{PACKAGE}",
@@ -39,8 +39,8 @@ setup(
     platforms="any",
     classifiers=CLASSIFIERS,
     keywords=KEYWORDS,
-    packages=[PACKAGE],
-    include_package_data=True,
+    packages=find_packages(),
+    package_data={"": ["*.template"]},
     install_requires=["robotframework>=4.1", "toml>=0.10.2", "pathspec==0.9.*", "jinja2", "tabulate==0.8.9"],
     extras_requires={
         "dev": ["pytest", "black"],
