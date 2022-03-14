@@ -168,8 +168,21 @@ class ResourceVisitor(ast.NodeVisitor):
             self.libraries[(node.name, node.alias)] = node.args
 
     def visit_Variable(self, node):  # noqa
-        if node.name:
-            self.variables[node.name] = node.value[0]  # FIXME arrays and such..by default ${VAR}  1 -> 1 is tuple
+        if node.name and not node.errors:
+            if node.name[0] == "$":
+                self.variables[node.name] = node.value[0]
+            elif node.name[0] == "@":
+                self.variables[node.name] = list(node.value)
+            elif node.name[0] == "&":
+                self.variables[node.name] = self.set_dict(node.value)
+
+    @staticmethod
+    def set_dict(values):
+        ret = {}
+        for value in values:
+            key, val = value.split("=")
+            ret[key] = val
+        return ret
 
 
 class KeywordStore:

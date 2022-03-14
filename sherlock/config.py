@@ -94,8 +94,7 @@ class Config:
             help="Path to Robot Framework output file",
         )
         parser.add_argument(
-            "-r",
-            "--resource", action="append", help="Path/name of the library or resource to be included in analysis"
+            "-r", "--resource", action="append", help="Path/name of the library or resource to be included in analysis"
         )
         parser.add_argument(
             "-rp",
