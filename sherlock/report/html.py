@@ -33,14 +33,12 @@ class HtmlResultModel:
 
     @property
     def status(self):
-        status = "pass"
+        status = "label"
         for child in chain(self.keywords, self.children):
-            if child.status == "fail":
-                return "fail"
-            elif child.status == "skip":
-                status = "skip"
-            elif child.status == "label" and status == "pass":
-                status = "label"
+            if child.status in ("skip", "fail"):
+                return child.status
+            if child.status == "pass":
+                status = "pass"
         return status
 
     def fill_keywords(self, model):
