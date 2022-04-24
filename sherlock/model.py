@@ -288,7 +288,7 @@ class File:
                     row.append(kw.complexity)
                 row.append(kw.timings.total if kw.used else "")
                 kw_table.append(row)
-            headers = ["Keyword", "Executions"]
+            headers = ["Name", "Executions"]
             if has_complexity:
                 headers.append("Complexity")
             headers.append("Elapsed")
