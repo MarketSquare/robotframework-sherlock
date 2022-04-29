@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 import robot.errors
+from rich.table import Table
 from pathspec import PathSpec
 
 from robot.api import get_model
@@ -49,7 +50,7 @@ class KeywordStats:
         if self.complexity:
             s += f"  Complexity: {self.complexity}\n"
         if self.used:
-            s += "  Timings:\n"
+            s += "  Elapsed time:\n"
             s += textwrap.indent(str(self.timings), "    ")
         return s
 
@@ -78,11 +79,9 @@ class KeywordTimings:
 
     def format_time(self, milliseconds):
         if not self._count:
-            return "00:00:00:00"
-        hours, milliseconds = divmod(milliseconds, 360000)
-        minutes, milliseconds = divmod(milliseconds, 60000)
-        seconds, milliseconds = divmod(milliseconds, 1000)
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{milliseconds:03d}"
+            return "0"
+        seconds = milliseconds / 1000
+        return str(round(seconds))
 
     @property
     def max(self):
@@ -131,11 +130,6 @@ class KeywordTimings:
     def __radd__(self, other):
         return self.__add__(other)
 
-    def __str__(self):
-        cols = [[self.total, self.min, self.max, self.avg]]
-        headers = ["Total elapsed", "Shortest execution", "Longest execution", "Average execution"]
-        return tabulate(cols, headers=headers, tablefmt="plain") + "\n"
-
 
 class ResourceVisitor(ast.NodeVisitor):
     def __init__(self, parent):
@@ -170,7 +164,7 @@ class ResourceVisitor(ast.NodeVisitor):
     def visit_Variable(self, node):  # noqa
         if node.name and not node.errors:
             if node.name[0] == "$":
-                self.variables[node.name] = node.value[0]
+                self.variables[node.name] = node.value[0] if node.value else ""
             elif node.name[0] == "@":
                 self.variables[node.name] = list(node.value)
             elif node.name[0] == "&":
@@ -271,29 +265,6 @@ class File:
         if self.errors:
             s += "Import errors:\n"
             s += textwrap.indent("".join(self.errors), "    ")
-        if not self.keywords:
-            return s
-        keywords = [kw for kw in self.keywords]
-        if keywords:
-            timings = sum((kw.timings for kw in keywords if kw.used), KeywordTimings())
-            s += "  Timings:\n"
-            s += textwrap.indent(str(timings), "    ")
-            s += f"\n  Keywords:\n"
-            # FIXME Timings (and are optional too)
-            has_complexity = any(kw.complexity for kw in keywords)
-            kw_table = []
-            for kw in keywords:
-                row = [kw.name, kw.used]
-                if has_complexity:
-                    row.append(kw.complexity)
-                row.append(kw.timings.total if kw.used else "")
-                kw_table.append(row)
-            headers = ["Name", "Executions"]
-            if has_complexity:
-                headers.append("Complexity")
-            headers.append("Elapsed")
-            table = tabulate(kw_table, headers=headers, tablefmt="pretty", colalign=("left",))
-            s += textwrap.indent(table, "    ")
         return s
 
 
