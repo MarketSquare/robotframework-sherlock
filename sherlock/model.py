@@ -49,7 +49,7 @@ class KeywordStats:
         if self.complexity:
             s += f"  Complexity: {self.complexity}\n"
         if self.used:
-            s += "  Timings:\n"
+            s += "  Elapsed time:\n"
             s += textwrap.indent(str(self.timings), "    ")
         return s
 
@@ -78,11 +78,9 @@ class KeywordTimings:
 
     def format_time(self, milliseconds):
         if not self._count:
-            return "00:00:00:00"
-        hours, milliseconds = divmod(milliseconds, 360000)
-        minutes, milliseconds = divmod(milliseconds, 60000)
-        seconds, milliseconds = divmod(milliseconds, 1000)
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{milliseconds:03d}"
+            return "0"
+        seconds = milliseconds / 1000
+        return str(round(seconds))
 
     @property
     def max(self):
@@ -133,8 +131,8 @@ class KeywordTimings:
 
     def __str__(self):
         cols = [[self.total, self.min, self.max, self.avg]]
-        headers = ["Total elapsed", "Shortest execution", "Longest execution", "Average execution"]
-        return tabulate(cols, headers=headers, tablefmt="plain") + "\n"
+        headers = ["Total elapsed [s]", "Shortest execution [s]", "Longest execution [s]", "Average execution [s]"]
+        return tabulate(cols, headers=headers, tablefmt="pretty") + "\n"
 
 
 class ResourceVisitor(ast.NodeVisitor):
@@ -170,7 +168,7 @@ class ResourceVisitor(ast.NodeVisitor):
     def visit_Variable(self, node):  # noqa
         if node.name and not node.errors:
             if node.name[0] == "$":
-                self.variables[node.name] = node.value[0]
+                self.variables[node.name] = node.value[0] if node.value else ""
             elif node.name[0] == "@":
                 self.variables[node.name] = list(node.value)
             elif node.name[0] == "&":
@@ -276,7 +274,7 @@ class File:
         keywords = [kw for kw in self.keywords]
         if keywords:
             timings = sum((kw.timings for kw in keywords if kw.used), KeywordTimings())
-            s += "  Timings:\n"
+            s += "  Elapsed time:\n"
             s += textwrap.indent(str(timings), "    ")
             s += f"\n  Keywords:\n"
             # FIXME Timings (and are optional too)
@@ -286,12 +284,15 @@ class File:
                 row = [kw.name, kw.used]
                 if has_complexity:
                     row.append(kw.complexity)
-                row.append(kw.timings.total if kw.used else "")
+                if kw.used:
+                    row.extend([kw.timings.avg, kw.timings.total])
+                else:
+                    row.extend(["", ""])
                 kw_table.append(row)
             headers = ["Name", "Executions"]
             if has_complexity:
                 headers.append("Complexity")
-            headers.append("Elapsed")
+            headers.extend(["Average time [s]", "Total time [s]"])
             table = tabulate(kw_table, headers=headers, tablefmt="pretty", colalign=("left",))
             s += textwrap.indent(table, "    ")
         return s
