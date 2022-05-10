@@ -14,6 +14,12 @@ run following command inside `robotframework-sherlock` directory:
 pip install .
 ```
 
+Install or update directly from sources 
+```commandline
+pip install -U git+https://github.com/bhirsz/robotframework-sherlock.git
+```
+
+
 Add `-e` flag after installation if you want Sherlock to reload installed version after each code update (performed via `git pull`).
 ## Usage
 
