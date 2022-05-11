@@ -41,7 +41,14 @@ setup(
     keywords=KEYWORDS,
     packages=find_packages(),
     package_data={"": ["*.template"]},
-    install_requires=["robotframework>=4.1", "toml>=0.10.2", "pathspec==0.9.*", "jinja2", "tabulate==0.8.9"],
+    install_requires=[
+        "robotframework>=4.1",
+        "toml>=0.10.2",
+        "pathspec==0.9.*",
+        "jinja2",
+        "tabulate==0.8.9",
+        "rich>=10.12.0",
+    ],
     extras_requires={
         "dev": ["pytest", "black"],
         # "doc": ["sphinx", "sphinx_rtd_theme"],

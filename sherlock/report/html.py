@@ -26,7 +26,7 @@ class HtmlResultModel:
         self.show = "BuiltIn" not in self.name
         self.children = []
         self.keywords = []
-        self.timings = None
+        self.timings = KeywordTimings()
         self.errors = model.errors
         self.fill_keywords(model)
         self.fill_children(model)
@@ -39,12 +39,13 @@ class HtmlResultModel:
                 return child.status
             if child.status == "pass":
                 status = "pass"
+        if self.type == SUITE_TYPE.upper() and not self.keywords:
+            return "pass"
         return status
 
     def fill_keywords(self, model):
         if model.type not in (RESOURCE_TYPE, LIBRARY_TYPE, SUITE_TYPE) or not model.keywords:
             return
-        self.timings = KeywordTimings()
         for index, kw in enumerate(model.keywords):
             self.timings += kw.timings
             new_id = f"{self.element_id}-k{index}"
@@ -73,7 +74,9 @@ class HtmlResultModel:
             return
         for index, child in enumerate(self.get_children_with_init_first(model)):
             new_id = f"{self.element_id}-r{index}"
-            self.children.append(HtmlResultModel(new_id, child))
+            model = HtmlResultModel(new_id, child)
+            self.timings += model.timings
+            self.children.append(model)
 
 
 def html_report(directory, name, output_dir):
