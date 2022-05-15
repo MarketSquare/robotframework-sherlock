@@ -230,27 +230,11 @@ class KeywordResourceStore(KeywordStore):
         return pattern.match(name)
 
 
-def _normalize_library_path(library):
-    path = library.replace("/", os.sep)
-    if os.path.exists(path):
-        return os.path.abspath(path)
-    return library
-
-
-def _get_library_name(name, directory):
-    if not _is_library_by_path(name):
-        return name
-    return find_file(name, directory, LIBRARY_TYPE)  # TODO handle DataError when not found
-
-
-def _is_library_by_path(path):
-    return path.lower().endswith((".py", "/", os.sep))
-
-
 class File:
     def __init__(self, path):
         self.path = path
         self.name = str(Path(path).name)
+        self.name_no_ext = str(Path(path).stem)
         self.keywords = None
         self.errors = set()
 
@@ -304,7 +288,7 @@ class Library(File):
         self.name = library.orig_name
         self.keywords = KeywordLibraryStore(library, name)
 
-    def search(self, name, *args):
+    def search(self, name):
         if not self.keywords:
             return []
         return self.keywords.find_kw(name)
@@ -327,54 +311,14 @@ class Resource(File):
 
         self.resources = visitor.resources
         self.libraries = visitor.libraries
-        self.imported_resources, self.imported_libraries = [], []
 
     def get_type(self):
         return SUITE_TYPE if self.has_tests else RESOURCE_TYPE
 
-    def init_imports(self, namespace):
-        """Called on start of every suite to resolve imports"""
-        self.imported_resources, self.imported_libraries = [], []
-
-        self.current_variables = Variables()
-        self.current_variables.update(namespace if hasattr(namespace, "store") else namespace.current)  # FIXME
-        self.current_variables.update(self.variables.copy())
-
-        for resource in self.resources:
-            try:
-                resource = self.current_variables.replace_string(resource)
-            except DataError as err:
-                pass
-                # TODO
-                # self._raise_replacing_vars_failed(import_setting, err)
-            self.imported_resources.append(str(Path(self.directory, resource).resolve()))  # FIXME
-        for (lib, alias), args in self.libraries.items():
-            library = self.current_variables.replace_string(lib)
-            library = _normalize_library_path(library)
-            library = _get_library_name(library, self.directory)
-            self.imported_libraries.append((library, alias, args))
-
-    def search(self, name, resources, libname):
-        found = []
-        if not libname or Path(self.path).stem == libname:
-            found += self.keywords.find_kw(name)
-            if found:
-                return found
-        for resource in self.imported_resources:
-            if resource in resources:
-                resources[resource].init_imports(self.current_variables)
-                found += resources[resource].search(name, resources, libname)
-                if found:
-                    return found
-        for lib, alias, args in self.imported_libraries:
-            if lib not in resources:
-                continue
-            resources[lib].load_library(args, self.current_variables)
-            if not libname or (alias and alias == libname) or (not alias and resources[lib].name == libname):
-                found += resources[lib].search(name, resources)
-        if found:
-            return found
-        return resources["BuiltIn"].search(name, resources)
+    def search(self, name, lib_name):
+        if lib_name and lib_name != self.name_no_ext:
+            return []
+        return self.keywords.find_kw(name)
 
 
 class Tree:

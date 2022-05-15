@@ -18,13 +18,13 @@ class TestImportWithVariable(AcceptanceTest):
                         Tree(name="a.resource", keywords=[]),
                         Tree(
                             name="b.resource",
-                            keywords=[Keyword(name="Internal Keyword", used=1), Keyword(name="Keyword 1", used=1)],
+                            keywords=[Keyword(name="Internal Keyword", used=0), Keyword(name="Keyword 1", used=1)],
                         ),
                         Tree(
                             name="c.resource",
                             keywords=[Keyword(name="Internal Keyword", used=1), Keyword(name="Keyword 1", used=1)],
                         ),
-                        Tree(name="test_a.robot", keywords=[Keyword(name="Internal Keyword", used=0)]),
+                        Tree(name="test_a.robot", keywords=[Keyword(name="Internal Keyword", used=1)]),
                         Tree(name="test_b.robot", keywords=[]),
                     ],
                 )
