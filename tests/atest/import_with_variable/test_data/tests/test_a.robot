@@ -12,4 +12,4 @@ Test
 
 *** Keywords ***
 Internal Keyword
-    Log  I should never be called
+    Log  I am called from b.resource
