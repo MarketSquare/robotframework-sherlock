@@ -107,7 +107,7 @@ class AcceptanceTest:
 
     def run_robot(self):
         source = self.ROOT / self.TEST_PATH
-        cmd = f"robot --outputdir {self.ROOT} {source}"
+        cmd = f"robot --outputdir {self.ROOT} {source}".split()
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def remove_robot_files(self):
