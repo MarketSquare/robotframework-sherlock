@@ -49,8 +49,8 @@ setup(
         "tabulate==0.8.9",
         "rich>=10.12.0",
     ],
-    extras_requires={
-        "dev": ["pytest", "black"],
+    extras_require={
+        "dev": ["coverage", "pytest", "robotframework-templateddata"],
         # "doc": ["sphinx", "sphinx_rtd_theme"],
     },
     entry_points={"console_scripts": [f"{PACKAGE}={PACKAGE}:run_cli"]},
