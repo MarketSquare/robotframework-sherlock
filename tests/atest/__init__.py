@@ -113,7 +113,8 @@ class AcceptanceTest:
 
     def remove_robot_files(self):
         for path in (self.ROOT / "log.html", self.ROOT / "output.xml", self.ROOT / "report.html"):
-            path.unlink(missing_ok=True)
+            if path.exists():
+                path.unlink()
 
     def setup_method(self):
         self.run_robot()
