@@ -27,6 +27,10 @@ def get_output(output):
     return data
 
 
+def sort_by_name(collection):
+    return sorted(collection, key=lambda x: x["name"])
+
+
 def match_tree(expected, actual):
     if expected["name"] != actual["name"]:
         print(f"Expected name '{expected['name']}' does not match actual name '{actual['name']}'")
@@ -39,7 +43,9 @@ def match_tree(expected, actual):
                 f"does not match actual: {len(actual['keywords'])}"
             )
             return False
-        for exp_keyword, act_keyword in zip(sorted(expected["keywords"]), sorted(actual["keywords"])):
+        expected["keywords"] = sort_by_name(expected["keywords"])
+        actual["keywords"] = sort_by_name(actual["keywords"])
+        for exp_keyword, act_keyword in zip(expected["keywords"], actual["keywords"]):
             if "used" not in exp_keyword:
                 act_keyword.pop("used", None)
             if "complexity" not in exp_keyword:
@@ -56,9 +62,10 @@ def match_tree(expected, actual):
                 f"does not match actual: {len(actual['children'])}"
             )
             return False
+        expected["children"] = sort_by_name(expected["children"])
+        actual["children"] = sort_by_name(actual["children"])
         if not all(
-            match_tree(exp_child, act_child)
-            for exp_child, act_child in zip(sorted(expected["children"]), sorted(actual["children"]))
+            match_tree(exp_child, act_child) for exp_child, act_child in zip(expected["children"], actual["children"])
         ):
             return False
 
