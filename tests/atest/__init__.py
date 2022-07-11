@@ -39,7 +39,7 @@ def match_tree(expected, actual):
                 f"does not match actual: {len(actual['keywords'])}"
             )
             return False
-        for exp_keyword, act_keyword in zip(expected["keywords"], actual["keywords"]):
+        for exp_keyword, act_keyword in zip(sorted(expected["keywords"]), sorted(actual["keywords"])):
             if "used" not in exp_keyword:
                 act_keyword.pop("used", None)
             if "complexity" not in exp_keyword:
@@ -57,7 +57,8 @@ def match_tree(expected, actual):
             )
             return False
         if not all(
-            match_tree(exp_child, act_child) for exp_child, act_child in zip(expected["children"], actual["children"])
+            match_tree(exp_child, act_child)
+            for exp_child, act_child in zip(sorted(expected["children"]), sorted(actual["children"]))
         ):
             return False
 
