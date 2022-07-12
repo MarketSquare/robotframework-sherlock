@@ -27,6 +27,10 @@ def get_output(output):
     return data
 
 
+def sort_by_name(collection):
+    return sorted(collection, key=lambda x: x["name"])
+
+
 def match_tree(expected, actual):
     if expected["name"] != actual["name"]:
         print(f"Expected name '{expected['name']}' does not match actual name '{actual['name']}'")
@@ -39,6 +43,8 @@ def match_tree(expected, actual):
                 f"does not match actual: {len(actual['keywords'])}"
             )
             return False
+        expected["keywords"] = sort_by_name(expected["keywords"])
+        actual["keywords"] = sort_by_name(actual["keywords"])
         for exp_keyword, act_keyword in zip(expected["keywords"], actual["keywords"]):
             if "used" not in exp_keyword:
                 act_keyword.pop("used", None)
@@ -56,6 +62,8 @@ def match_tree(expected, actual):
                 f"does not match actual: {len(actual['children'])}"
             )
             return False
+        expected["children"] = sort_by_name(expected["children"])
+        actual["children"] = sort_by_name(actual["children"])
         if not all(
             match_tree(exp_child, act_child) for exp_child, act_child in zip(expected["children"], actual["children"])
         ):
@@ -85,6 +93,9 @@ class Tree:
             ret["type"] = self.res_type
         return ret
 
+    def __str__(self):
+        return str(self.to_json())
+
 
 class Keyword:
     def __init__(self, name, used=None, complexity=None):
@@ -107,12 +118,13 @@ class AcceptanceTest:
 
     def run_robot(self):
         source = self.ROOT / self.TEST_PATH
-        cmd = f"robot --outputdir {self.ROOT} {source}"
+        cmd = f"robot --outputdir {self.ROOT} {source}".split()
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def remove_robot_files(self):
         for path in (self.ROOT / "log.html", self.ROOT / "output.xml", self.ROOT / "report.html"):
-            path.unlink(missing_ok=True)
+            if path.exists():
+                path.unlink()
 
     def setup_method(self):
         self.run_robot()
