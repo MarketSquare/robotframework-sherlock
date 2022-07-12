@@ -93,6 +93,9 @@ class Tree:
             ret["type"] = self.res_type
         return ret
 
+    def __str__(self):
+        return str(self.to_json())
+
 
 class Keyword:
     def __init__(self, name, used=None, complexity=None):

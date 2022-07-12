@@ -4,7 +4,7 @@ from .. import Tree, Keyword, AcceptanceTest
 
 
 class TestDuplicatedImports(AcceptanceTest):
-    ROOT = Path(Path(__file__).parent, "test_data")
+    ROOT = Path(__file__).parent / "test_data"
 
     def test(self):
         data = self.run_sherlock()
