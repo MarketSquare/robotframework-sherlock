@@ -132,10 +132,12 @@ class AcceptanceTest:
     def teardown_method(self):
         self.remove_robot_files()
 
-    def run_sherlock(self, source=None, resource=None):
+    def run_sherlock(self, source=None, resource=None, report=None):
+        if report is None:
+            report = ["json"]
         robot_output = self.ROOT / "output.xml"
         source = source or self.ROOT
-        run_sherlock(robot_output=robot_output, source=source, report=["json"], resource=resource)
+        run_sherlock(robot_output=robot_output, source=source, report=report, resource=resource)
         data = get_output(f"sherlock_{source.name}.json")
         return data
 
