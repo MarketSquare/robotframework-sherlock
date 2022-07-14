@@ -162,19 +162,20 @@ class ResourceVisitor(ast.NodeVisitor):
             self.libraries[(node.name, node.alias)] = node.args
 
     def visit_Variable(self, node):  # noqa
-        if node.name and not node.errors:
-            if node.name[0] == "$":
-                self.variables[node.name] = node.value[0] if node.value else ""
-            elif node.name[0] == "@":
-                self.variables[node.name] = list(node.value)
-            elif node.name[0] == "&":
-                self.variables[node.name] = self.set_dict(node.value)
+        if not node.name or node.errors:
+            return
+        if node.name[0] == "$":
+            self.variables[node.name] = node.value[0] if node.value else ""
+        elif node.name[0] == "@":
+            self.variables[node.name] = list(node.value)
+        elif node.name[0] == "&":
+            self.variables[node.name] = self.set_dict(node.value)
 
     @staticmethod
     def set_dict(values):
         ret = {}
         for value in values:
-            key, val = value.split("=")
+            key, val = value.split("=") if "=" in value else (value, "")
             ret[key] = val
         return ret
 

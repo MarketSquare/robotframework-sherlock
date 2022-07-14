@@ -5,6 +5,9 @@
 ${VAR}    ENV
 ${VAR2}    ENV2  # comment
 VAR  3
+&{CONTAINS_OTHER}    &{MANY}
+&{INVALID}    key
+&{EMPTY}
 
 *** Test Cases ***
 Test
