@@ -236,7 +236,7 @@ class File:
         self.path = path
         self.name = str(Path(path).name)
         self.name_no_ext = str(Path(path).stem)
-        self.keywords = None
+        self.keywords = []
         self.errors = set()
 
     def get_resources(self):
