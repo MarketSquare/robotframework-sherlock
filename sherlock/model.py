@@ -146,7 +146,7 @@ class ResourceVisitor(ast.NodeVisitor):
 
     def visit_Keyword(self, node):  # noqa
         embedded = EmbeddedArguments(node.name)
-        if embedded:
+        if embedded and embedded.args:
             self.embedded_keywords[node.name] = (KeywordStats(node.name, parent=self.parent, node=node), embedded.name)
         else:
             self.normal_keywords[node.name] = KeywordStats(
