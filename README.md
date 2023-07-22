@@ -8,19 +8,12 @@ The tool for analyzing Robot Framework code in terms of not used code, code comp
 > not listed in GitHub issues, please open an new issue.
 
 ## Installation
-Currently, you need to install Sherlock from the source code. In order to do so, first clone the repository, and 
-run following command inside `robotframework-sherlock` directory:
+
+You can install the latest version of Robocop simply by running:
 ```commandline
-pip install .
+pip install -U robotframework-sherlock
 ```
 
-Install or update directly from sources 
-```commandline
-pip install -U git+https://github.com/bhirsz/robotframework-sherlock.git
-```
-
-
-Add `-e` flag after installation if you want Sherlock to reload installed version after each code update (performed via `git pull`).
 ## Usage
 
 Sherlock can prepare analysis based on your source code alone. However, it's currently highly recommended to also include
