@@ -76,8 +76,8 @@ class StructureVisitor(SuiteVisitor):
     def visit_suite(self, suite):
         self.imported_resources = OrderedDict()
         self.imported_libraries = OrderedDict()
-        if suite.source in self.resources:
-            suite_resource = self.resources[suite.source]
+        if str(suite.source) in self.resources:
+            suite_resource = self.resources[str(suite.source)]
         elif Path(suite.source).is_dir() and str(Path(suite.source) / "__init__.robot") in self.resources:
             suite_resource = self.resources[str(Path(suite.source) / "__init__.robot")]
         else:
@@ -112,7 +112,8 @@ class StructureVisitor(SuiteVisitor):
                 found[0].timings.add_timing(kw.elapsedtime)
             if hasattr(kw, "body"):
                 kw.body.visit(self)
-        kw.teardown.visit(self)
+        if getattr(kw, "teardown", None):
+            kw.teardown.visit(self)
 
     def search_def(self, kw_name, lib_name):
         found = []

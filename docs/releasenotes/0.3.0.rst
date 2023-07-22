@@ -1,0 +1,19 @@
+================
+Sherlock 0.3.0
+================
+
+This release focus on fixing critical issutes with Robot Framework compatibility and improves core features of Sherlock.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-sherlock
+
+or to install exactly this version::
+
+    pip install robotframework-sherlock==0.3.0
+
+
+Fix Sherlock in Robot Framework 6.0
+-----------------------------------
+
+Sherlock shall now support Robot Framework 6.0+.
