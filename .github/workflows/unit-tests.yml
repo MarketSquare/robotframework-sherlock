@@ -18,7 +18,7 @@ jobs:
             python-version: '3.9'
             rf-version: 'stable5'
           - os: 'ubuntu-latest'
-            python-version: '3.7'
+            python-version: '3.8'
             rf-version: 'stable4'
           - os: 'ubuntu-latest'
             python-version: '3.8'

@@ -41,6 +41,7 @@ setup(
     keywords=KEYWORDS,
     packages=find_packages(),
     package_data={"": ["*.template"]},
+    python_requires=">=3.8",
     install_requires=[
         "robotframework>=4.1",
         "toml>=0.10.2",

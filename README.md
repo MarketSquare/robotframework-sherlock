@@ -9,10 +9,12 @@ The tool for analyzing Robot Framework code in terms of not used code, code comp
 
 ## Installation
 
-You can install the latest version of Robocop simply by running:
+You can install the latest version of Sherlock simply by running:
 ```commandline
 pip install -U robotframework-sherlock
 ```
+
+Sherlock requires Python 3.8+.
 
 ## Usage
 
