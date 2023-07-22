@@ -1,13 +1,16 @@
 from pathlib import Path
 
+import pytest
+
 from .. import Tree, Keyword, AcceptanceTest
 
 
 class TestDuplicatedImports(AcceptanceTest):
     ROOT = Path(__file__).parent / "test_data"
 
-    def test(self):
-        data = self.run_sherlock()
+    @pytest.mark.parametrize("run_robot", [True, False])
+    def test(self, run_robot):
+        data = self.run_sherlock(run_robot=run_robot)
         expected = Tree(
             name="test_data",
             children=[

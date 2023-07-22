@@ -8,4 +8,5 @@ class TestComplicatedStructure(AcceptanceTest):
     TEST_PATH = "tests"
 
     def test(self):
+        self.run_robot()
         run_sherlock(robot_output=self.ROOT / "output.xml", source=self.ROOT, report=["html"])

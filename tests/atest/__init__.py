@@ -123,19 +123,19 @@ class AcceptanceTest:
 
     def remove_robot_files(self):
         for path in (self.ROOT / "log.html", self.ROOT / "output.xml", self.ROOT / "report.html"):
-            if path.exists():
-                path.unlink()
-
-    def setup_method(self):
-        self.run_robot()
+            path.unlink(missing_ok=True)
 
     def teardown_method(self):
         self.remove_robot_files()
 
-    def run_sherlock(self, source=None, resource=None, report=None):
+    def run_sherlock(self, source=None, resource=None, report=None, run_robot=True):
         if report is None:
             report = ["json"]
-        robot_output = self.ROOT / "output.xml"
+        if run_robot:
+            self.run_robot()
+            robot_output = self.ROOT / "output.xml"
+        else:
+            robot_output = None
         source = source or self.ROOT
         run_sherlock(robot_output=robot_output, source=source, report=report, resource=resource)
         data = get_output(f"sherlock_{source.name}.json")
