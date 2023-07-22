@@ -17,3 +17,8 @@ Fix Sherlock in Robot Framework 6.0
 -----------------------------------
 
 Sherlock shall now support Robot Framework 6.0+.
+
+Other
+-----
+
+- Sherlock now requires at least Python 3.8 to run
