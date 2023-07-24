@@ -14,7 +14,7 @@ from sherlock.exceptions import SherlockFatalError
 
 @pytest.fixture
 def path_to_test_data():
-    return Path(Path(__file__).parent.parent, "test_data")
+    return Path(__file__).parent.parent / "test_data"
 
 
 @contextlib.contextmanager

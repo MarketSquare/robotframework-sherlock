@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .. import Tree, Keyword, AcceptanceTest
+from tests.atest import Tree, Keyword, AcceptanceTest
 
 
 class TestSuiteSetups(AcceptanceTest):

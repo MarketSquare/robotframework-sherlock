@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import Tree, Keyword, AcceptanceTest
+from tests.atest import Tree, Keyword, AcceptanceTest
 
 
 class TestDuplicatedImports(AcceptanceTest):

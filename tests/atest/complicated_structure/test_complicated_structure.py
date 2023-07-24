@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from .. import run_sherlock, AcceptanceTest
+from tests.atest import run_sherlock, AcceptanceTest
 
 
 class TestComplicatedStructure(AcceptanceTest):
-    ROOT = Path(Path(__file__).parent, "test_data")
+    ROOT = Path(__file__).parent / "test_data"
     TEST_PATH = "tests"
 
     def test(self):

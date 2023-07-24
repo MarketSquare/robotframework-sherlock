@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from .. import Tree, Keyword, AcceptanceTest
+from tests.atest import Tree, Keyword, AcceptanceTest
 
 
 class TestRecursiveImport(AcceptanceTest):
-    ROOT = Path(Path(__file__).parent, "test_data")
+    ROOT = Path(__file__).parent / "test_data"
     TEST_PATH = ""
 
     def test(self):
