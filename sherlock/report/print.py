@@ -4,6 +4,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
 
+import sherlock.report
 from sherlock.model import DIRECTORY_TYPE, KeywordTimings
 
 
@@ -60,12 +61,16 @@ def log_directory(directory, tree):
                 tree.add(text)
 
 
-def print_report(directory, log_handle):
-    tree = Tree(
-        f"[link file://{directory}]{directory}",
-        guide_style="bold bright_blue",
-    )
-    log_directory(directory, tree)
-    console = Console()
-    console.print()
-    console.print(tree)
+class PrintReport(sherlock.report.Report):
+    name: str = "print"
+    description: str = "Simple printed report"
+
+    def get_report(self, directory, tree_name, path_root):
+        tree = Tree(
+            f"[link file://{directory}]{directory}",
+            guide_style="bold bright_blue",
+        )
+        log_directory(directory, tree)
+        console = Console()
+        console.print()
+        console.print(tree)

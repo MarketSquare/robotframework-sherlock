@@ -7,6 +7,7 @@ import pytest
 
 import sherlock.config
 from sherlock.config import Config
+from sherlock.core import Sherlock
 from sherlock.exceptions import SherlockFatalError
 
 
@@ -63,9 +64,17 @@ class TestCli:
     def test_invalid_report(self):
         with patch.object(sys, "argv", "sherlock --report print,invalid".split(),), pytest.raises(
             SherlockFatalError,
-            match="Report 'invalid' not recognized. Use comma separated list of values from: print, html, json",
+            match="Provided report 'invalid' does not exist. Use comma separated list of values from: html,json,print",
         ):
-            Config()
+            Sherlock()
+
+    def test_invalid_report_similar(self):
+        with patch.object(sys, "argv", "sherlock --report printt".split(),), pytest.raises(
+            SherlockFatalError,
+            match="Provided report 'printt' does not exist. Use comma separated list of values from: html,json,print. "
+            "Did you mean:\n    print",
+        ):
+            Sherlock()
 
     def test_default_report(self):
         with patch.object(sys, "argv", "sherlock".split()):

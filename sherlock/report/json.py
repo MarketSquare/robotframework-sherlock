@@ -1,5 +1,6 @@
 import json
 
+import sherlock.report
 from sherlock.model import DIRECTORY_TYPE
 
 
@@ -18,7 +19,11 @@ def directory_to_json(directory):
     return ret
 
 
-def json_report(directory, name, output_dir):
-    ret = directory_to_json(directory)
-    with open(output_dir / f"sherlock_{name}.json", "w") as f:
-        json.dump(ret, f, indent=4)
+class JsonReport(sherlock.report.Report):
+    name: str = "json"
+    description: str = "JSON report"
+
+    def get_report(self, tree, tree_name, path_root):
+        ret = directory_to_json(tree)
+        with open(path_root / f"sherlock_{tree_name}.json", "w") as f:
+            json.dump(ret, f, indent=4)
