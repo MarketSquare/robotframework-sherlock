@@ -2,6 +2,7 @@ import pytest
 from robot.api import get_model
 
 from sherlock.model import KeywordStats
+
 from .complexity_models import model_1complexity, model_3complexity, model_5complexity
 
 

@@ -50,11 +50,7 @@ class TestCli:
             assert config.output == config.path / fp.name
 
     def test_default_source(self):
-        with patch.object(
-            sys,
-            "argv",
-            ["sherlock"]
-        ):
+        with patch.object(sys, "argv", ["sherlock"]):
             config = Config()
             assert config.path == Path.cwd()
 
@@ -72,10 +68,6 @@ class TestCli:
             Config()
 
     def test_default_report(self):
-        with patch.object(
-            sys,
-            "argv",
-            "sherlock".split()
-        ):
+        with patch.object(sys, "argv", "sherlock".split()):
             config = Config()
             assert config.report == ["print"]

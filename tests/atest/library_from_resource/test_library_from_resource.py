@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.atest import Tree, Keyword, AcceptanceTest
+from tests.atest import AcceptanceTest, Keyword, Tree
 
 
 @pytest.mark.skip(reason="Library import with sleeps for timing tests")

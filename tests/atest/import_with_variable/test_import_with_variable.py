@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tests.atest import Tree, Keyword, AcceptanceTest
+from tests.atest import AcceptanceTest, Keyword, Tree
 
 
 class TestImportWithVariable(AcceptanceTest):

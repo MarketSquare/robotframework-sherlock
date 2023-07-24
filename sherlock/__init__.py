@@ -1,4 +1,5 @@
 import sys
+
 from sherlock.core import Sherlock
 from sherlock.exceptions import SherlockFatalError
 

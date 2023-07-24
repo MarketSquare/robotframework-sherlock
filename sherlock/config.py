@@ -1,14 +1,13 @@
 import argparse
-from typing import List
 from pathlib import Path
+from typing import List
 
 import toml
 from robot.conf import RobotSettings
 
-from sherlock.file_utils import find_project_root, find_file_in_project_root, get_gitignore
 from sherlock.exceptions import SherlockFatalError
+from sherlock.file_utils import find_file_in_project_root, find_project_root, get_gitignore
 from sherlock.version import __version__
-
 
 BUILT_IN = "BuiltIn"
 ROBOT_DEFAULT_OUTPUT = "output.xml"

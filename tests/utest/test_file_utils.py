@@ -1,10 +1,10 @@
+import contextlib
 import os
 from pathlib import Path
-import contextlib
 
 import pytest
 
-from sherlock.file_utils import find_project_root, get_gitignore, find_file_in_project_root
+from sherlock.file_utils import find_file_in_project_root, find_project_root, get_gitignore
 
 
 @pytest.fixture

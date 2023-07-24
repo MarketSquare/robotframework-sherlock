@@ -1,12 +1,10 @@
 from rich.console import Console, Group
 from rich.markup import escape
+from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
-from rich.table import Table
 
-
-from sherlock.model import DIRECTORY_TYPE
-from sherlock.model import KeywordTimings
+from sherlock.model import DIRECTORY_TYPE, KeywordTimings
 
 
 def timings_to_table(timings):

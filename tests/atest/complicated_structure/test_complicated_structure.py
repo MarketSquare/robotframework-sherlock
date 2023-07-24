@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tests.atest import run_sherlock, AcceptanceTest
+from tests.atest import AcceptanceTest, run_sherlock
 
 
 class TestComplicatedStructure(AcceptanceTest):
