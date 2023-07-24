@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from . import run_sherlock, AcceptanceTest
+from . import AcceptanceTest, run_sherlock
 
 
 class TestExampleWorkflow(AcceptanceTest):

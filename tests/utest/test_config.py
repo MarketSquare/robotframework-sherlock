@@ -1,14 +1,14 @@
-from pathlib import Path
+import contextlib
 import io
+import os
 import sys
 import tempfile
-import os
-import contextlib
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
-from sherlock.config import TomlConfigParser, Config
+from sherlock.config import Config, TomlConfigParser
 from sherlock.exceptions import SherlockFatalError
 
 

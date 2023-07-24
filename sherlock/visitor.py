@@ -1,14 +1,14 @@
-from collections import OrderedDict
 import os
+from collections import OrderedDict
 from pathlib import Path
 
-from sherlock.model import LIBRARY_TYPE
-
 from robot.api import SuiteVisitor
-from robot.variables.scopes import VariableScopes
-from robot.utils import NormalizedDict, find_file
-from robot.variables.variables import Variables
 from robot.errors import DataError
+from robot.utils import NormalizedDict, find_file
+from robot.variables.scopes import VariableScopes
+from robot.variables.variables import Variables
+
+from sherlock.model import LIBRARY_TYPE
 
 
 def _normalize_library_path(library):

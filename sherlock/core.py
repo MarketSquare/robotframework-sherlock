@@ -1,11 +1,11 @@
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
-from robot.api import TestSuiteBuilder, ExecutionResult
+from robot.api import ExecutionResult, TestSuiteBuilder
 
-from sherlock.config import Config, BUILT_IN
-from sherlock.model import Tree, Library, Resource
-from sherlock.report import html_report, print_report, json_report
+from sherlock.config import BUILT_IN, Config
+from sherlock.model import Library, Resource, Tree
+from sherlock.report import html_report, json_report, print_report
 from sherlock.visitor import StructureVisitor
 
 

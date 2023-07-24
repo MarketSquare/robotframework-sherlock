@@ -3,8 +3,8 @@ from pathlib import Path
 
 from jinja2 import Template
 
-from sherlock.model import DIRECTORY_TYPE, RESOURCE_TYPE, LIBRARY_TYPE, SUITE_TYPE, KeywordTimings
 from sherlock.file_utils import INIT_EXT
+from sherlock.model import DIRECTORY_TYPE, LIBRARY_TYPE, RESOURCE_TYPE, SUITE_TYPE, KeywordTimings
 
 
 class KeywordResult:

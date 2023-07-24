@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.atest import get_output, Tree, Keyword, AcceptanceTest
+from tests.atest import AcceptanceTest, Keyword, Tree, get_output
 
 
 @pytest.mark.skip("does not work in CI - need to investigate")  # TODO
