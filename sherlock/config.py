@@ -48,8 +48,13 @@ class Config:
             self.set_parsed_opts(default)
 
         self.set_parsed_opts(dict(**vars(parsed_args)))
+        self.validate_test_path()
         self.validate_output()
         self.validate_report()
+
+    def validate_test_path(self):
+        if not self.path.exists():
+            raise SherlockFatalError(f"Path to source code does not exist: '{self.path.resolve()}'")
 
     def validate_output(self):
         if self.output is None:

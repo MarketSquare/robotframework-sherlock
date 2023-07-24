@@ -29,26 +29,26 @@ def working_directory(path):
 
 
 class TestConfig:
-    def test_load_args_from_cli(self):
+    def test_load_args_from_cli(self, tmp_path):
         with tempfile.NamedTemporaryFile() as fp, patch.object(
             sys,
             "argv",
-            f"sherlock --output {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output {fp.name} --log-output sherlock.log --report html {tmp_path}".split(),
         ):
             config = Config()
-            assert config.path == Path("path/to/directory")
+            assert config.path == Path(tmp_path)
             assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
 
-    def test_load_args_from_cli_no_pyproject(self):
+    def test_load_args_from_cli_no_pyproject(self, tmp_path):
         with tempfile.NamedTemporaryFile() as fp, working_directory(Path.home()), patch.object(
             sys,
             "argv",
-            f"sherlock --output {fp.name} --log-output sherlock.log --report html path/to/directory".split(),
+            f"sherlock --output {fp.name} --log-output sherlock.log --report html {tmp_path}".split(),
         ):
             config = Config()
-            assert config.path == Path("path/to/directory")
+            assert config.path == Path(tmp_path)
             assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["html"]
@@ -56,26 +56,26 @@ class TestConfig:
     def test_load_args_from_cli_overwrite_config(self, path_to_test_data):
         config_dir = path_to_test_data / "configs" / "pyproject"
         with tempfile.NamedTemporaryFile() as fp, working_directory(config_dir), patch.object(
-            sys, "argv", f"sherlock --output {fp.name} path/to/directory".split()
+            sys, "argv", f"sherlock --output {fp.name} {config_dir}".split()
         ):
             config = Config()
-            assert config.path == Path("path/to/directory")
+            assert config.path == Path(config_dir)
             assert config.output == Path(fp.name)
             assert isinstance(config.log_output, io.TextIOWrapper)
             assert config.report == ["print", "html"]
 
-    def test_load_args_from_cli_config_option(self, path_to_test_data):
+    def test_load_args_from_cli_config_option(self, path_to_test_data, tmp_path):
         config_dir = path_to_test_data / "configs" / "pyproject"
         with working_directory(config_dir), patch.object(
-            sys, "argv", "sherlock --config pyproject_other.toml path".split()
+            sys, "argv", f"sherlock --config pyproject_other.toml {tmp_path}".split()
         ):
             config = Config()
-            assert config.path == Path("path")
+            assert config.path == Path(tmp_path)
             assert config.log_output is None
             assert config.report == ["print"]
 
-    def test_load_args_from_config_missing_file(self):
-        with patch.object(sys, "argv", "sherlock --config idontexist.toml path".split()), pytest.raises(
+    def test_load_args_from_config_missing_file(self, tmp_path):
+        with patch.object(sys, "argv", f"sherlock --config idontexist.toml {tmp_path}".split()), pytest.raises(
             SherlockFatalError
         ) as err:
             Config()
