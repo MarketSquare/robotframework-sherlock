@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .. import get_output, Tree, Keyword, AcceptanceTest
+from tests.atest import get_output, Tree, Keyword, AcceptanceTest
 
 
 class TestResourceOutside(AcceptanceTest):

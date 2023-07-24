@@ -9,7 +9,7 @@ from sherlock.file_utils import find_project_root, get_gitignore, find_file_in_p
 
 @pytest.fixture
 def path_to_test_data():
-    return Path(Path(__file__).parent.parent, "test_data")
+    return Path(__file__).parent.parent / "test_data"
 
 
 @contextlib.contextmanager

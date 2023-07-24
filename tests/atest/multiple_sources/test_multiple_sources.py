@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from .. import Tree, Keyword, AcceptanceTest
+from tests.atest import Tree, Keyword, AcceptanceTest
 
 
 class TestMultipleSources(AcceptanceTest):
-    ROOT = Path(Path(__file__).parent, "test_data")
+    ROOT = Path(__file__).parent / "test_data"
 
     # def test_two_sources(self, path_to_test_data):
     #     robot_output = path_to_test_data / "output.xml"

@@ -121,13 +121,6 @@ class AcceptanceTest:
         cmd = f"robot --outputdir {self.ROOT} {source}".split()
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    def remove_robot_files(self):
-        for path in (self.ROOT / "log.html", self.ROOT / "output.xml", self.ROOT / "report.html"):
-            path.unlink(missing_ok=True)
-
-    def teardown_method(self):
-        self.remove_robot_files()
-
     def run_sherlock(self, source=None, resource=None, report=None, run_robot=True):
         if report is None:
             report = ["json"]
