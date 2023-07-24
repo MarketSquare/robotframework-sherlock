@@ -11,21 +11,21 @@ from sherlock.exceptions import SherlockFatalError
 
 
 class TestCli:
-    def test_invalid_output(self):
+    def test_invalid_output(self, tmp_path):
         with patch.object(
             sys,
             "argv",
-            "sherlock --output idontexist.xml --report html path/to/directory".split(),
+            f"sherlock --output idontexist.xml --report html {tmp_path}".split(),
         ), pytest.raises(
             SherlockFatalError, match="Reading Robot Framework output file failed. No such file: 'idontexist.xml'"
         ):
             Config()
 
-    def test_no_output(self):
+    def test_no_output(self, tmp_path):
         with patch.object(
             sys,
             "argv",
-            "sherlock --report html path/to/directory".split(),
+            f"sherlock --report html {tmp_path}".split(),
         ):
             Config()
 
@@ -53,10 +53,16 @@ class TestCli:
         with patch.object(
             sys,
             "argv",
-            ["sherlock"],
+            ["sherlock"]
         ):
             config = Config()
             assert config.path == Path.cwd()
+
+    def test_invalid_source(self):
+        full_invalid_path = Path(__file__).parent / "idontexist"
+        with patch.object(sys, "argv", ["sherlock", "idontexist"]), pytest.raises(SherlockFatalError) as err:
+            Config()
+            assert f"Path to source code does not exist: '{full_invalid_path}'" in str(err)
 
     def test_invalid_report(self):
         with patch.object(sys, "argv", "sherlock --report print,invalid".split(),), pytest.raises(
@@ -69,7 +75,7 @@ class TestCli:
         with patch.object(
             sys,
             "argv",
-            "sherlock".split(),
+            "sherlock".split()
         ):
             config = Config()
             assert config.report == ["print"]

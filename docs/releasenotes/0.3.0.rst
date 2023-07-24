@@ -2,7 +2,7 @@
 Sherlock 0.3.0
 ================
 
-This release focus on fixing critical issutes with Robot Framework compatibility and improves core features of Sherlock.
+This release focus on fixing critical issues with Robot Framework compatibility and improves core features of Sherlock.
 
 You can install the latest available version by running::
 
@@ -22,3 +22,4 @@ Other
 -----
 
 - Sherlock now requires at least Python 3.8 to run
+- improved configuration validations. Sherlock will now display human readable error if configured with invalid value
