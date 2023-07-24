@@ -47,7 +47,7 @@ jobs:
       run:
         coverage run -m pytest
     - name: Codecov
-      uses: codecov/codecov-action@v1.0.11
+      uses: codecov/codecov-action@v3.1.4
       with:
         name: codecov-sherlock
       if: always()
