@@ -35,6 +35,8 @@ class HtmlResultModel:
     @property
     def status(self):
         status = "label"
+        if self.errors:
+            return "fail"
         for child in chain(self.keywords, self.children):
             if child.status in ("skip", "fail"):
                 return child.status

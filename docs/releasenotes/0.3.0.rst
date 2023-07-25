@@ -12,6 +12,20 @@ or to install exactly this version::
 
     pip install robotframework-sherlock==0.3.0
 
+Loading libraries is now more resilient (#56)
+--------------------------------------------
+
+Invalid library imports or missing dependencies does not stop Sherlock execution now. Import errors should be now
+displayed in the report::
+
+    Directory: test_data
+    ├── Library: Library.py
+    │   Import errors:
+    │       D:\test.robot: Library 'Library' expected 0 arguments, got 1.
+    ├── Library: LibraryWithArgs.py
+    │   Import errors:
+    │       D:\test.robot: Library 'LibraryWithArgs' expected 1 argument, got 0.
+
 New --pythonpath option to enable searching in extra paths (#46)
 ----------------------------------------------------------------
 
