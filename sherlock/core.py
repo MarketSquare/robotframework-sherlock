@@ -5,13 +5,14 @@ from robot.api import ExecutionResult, TestSuiteBuilder
 
 from sherlock.config import BUILT_IN, Config
 from sherlock.model import Library, Resource, Tree
-from sherlock.report import html_report, json_report, print_report
+from sherlock.report import get_reports
 from sherlock.visitor import StructureVisitor
 
 
 class Sherlock:
     def __init__(self, config: Optional[Config] = None):
         self.config = Config() if config is None else config
+        self.reports = get_reports(self.config.report)
         self.resources = dict()
         self.directory = None
         self.packages: List[Tree] = []
@@ -47,12 +48,8 @@ class Sherlock:
         for tree in self.packages:
             if not self.config.include_builtin and tree.name == BUILT_IN:
                 continue
-            if "print" in self.config.report:
-                print_report(tree, self.config.log_output)
-            if "html" in self.config.report:
-                html_report(tree, tree.name, self.config.root)
-            if "json" in self.config.report:
-                json_report(tree, tree.name, self.config.root)
+            for report in self.reports.values():
+                report.get_report(tree, tree.name, self.config.root)
 
     def map_resources_for_path(self, root: Path):
         tree = Tree.from_directory(path=root, gitignore=self.config.default_gitignore)

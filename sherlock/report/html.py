@@ -3,6 +3,7 @@ from pathlib import Path
 
 from jinja2 import Template
 
+import sherlock.report
 from sherlock.file_utils import INIT_EXT
 from sherlock.model import DIRECTORY_TYPE, LIBRARY_TYPE, RESOURCE_TYPE, SUITE_TYPE, KeywordTimings
 
@@ -79,9 +80,13 @@ class HtmlResultModel:
             self.children.append(model)
 
 
-def html_report(directory, name, output_dir):
-    result = HtmlResultModel("d0", directory)
-    with open(Path(__file__).parent / "html.template") as f:
-        template = Template(f.read()).render(tree=[result])
-    with open(output_dir / f"sherlock_{name}.html", "w") as f:
-        f.write(template)
+class HTMLReport(sherlock.report.Report):
+    name: str = "html"
+    description: str = "HTML report"
+
+    def get_report(self, directory, name, output_dir):
+        result = HtmlResultModel("d0", directory)
+        with open(Path(__file__).parent / "html.template") as f:
+            template = Template(f.read()).render(tree=[result])
+        with open(output_dir / f"sherlock_{name}.html", "w") as f:
+            f.write(template)

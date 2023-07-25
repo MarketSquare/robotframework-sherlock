@@ -12,6 +12,13 @@ or to install exactly this version::
 
     pip install robotframework-sherlock==0.3.0
 
+Reports are now dynamically loaded
+----------------------------------
+
+<TODO: release notes about rewriting reports to be dynamically loaded, such as Robocop reports>
+
+Fixes
+=====
 
 Fix Sherlock in Robot Framework 6.0
 -----------------------------------
@@ -19,7 +26,7 @@ Fix Sherlock in Robot Framework 6.0
 Sherlock shall now support Robot Framework 6.0+.
 
 Other
------
+=====
 
 - Sherlock now requires at least Python 3.8 to run
 - improved configuration validations. Sherlock will now display human readable error if configured with invalid value
