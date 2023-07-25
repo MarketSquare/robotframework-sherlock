@@ -18,6 +18,15 @@ New --pythonpath option to enable searching in extra paths (#46)
 New ``--pythonpath`` option was added to allow specifying extra paths to be searched when looking for the test library.
 The supported syntax is the same as Robot Framework ``--pythonpath`` syntax.
 
+Sherlock now accepts single file as path argument
+-------------------------------------------------
+
+It is now possible to pass single file for Sherlock analysis::
+
+    sherlock test.robot
+
+In such case Sherlock will use file parent directory as a base.
+
 Reports are now dynamically loaded
 ----------------------------------
 

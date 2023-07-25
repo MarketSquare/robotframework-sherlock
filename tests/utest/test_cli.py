@@ -56,10 +56,10 @@ class TestCli:
             assert config.path == Path.cwd()
 
     def test_invalid_source(self):
-        full_invalid_path = Path(__file__).parent / "idontexist"
+        full_invalid_path = Path("idontexist").resolve()
         with patch.object(sys, "argv", ["sherlock", "idontexist"]), pytest.raises(SherlockFatalError) as err:
             Config()
-            assert f"Path to source code does not exist: '{full_invalid_path}'" in str(err)
+        assert f"Path to source code does not exist: '{full_invalid_path}'" in str(err.value)
 
     def test_invalid_report(self):
         with patch.object(sys, "argv", "sherlock --report print,invalid".split(),), pytest.raises(

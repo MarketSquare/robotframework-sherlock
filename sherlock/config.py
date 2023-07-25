@@ -95,6 +95,8 @@ class Config:
         self.validate_output()
 
     def validate_test_path(self):
+        if self.path.is_file():
+            self.path = self.path.parent
         if not self.path.exists():
             raise SherlockFatalError(f"Path to source code does not exist: '{self.path.resolve()}'")
 
