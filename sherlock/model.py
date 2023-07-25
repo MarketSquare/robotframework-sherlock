@@ -1,20 +1,16 @@
 import ast
 import math
-import os
 import textwrap
 from pathlib import Path
 from typing import Optional
 
 import robot.errors
 from pathspec import PathSpec
-from rich.table import Table
 from robot.api import get_model
-from robot.errors import DataError
 from robot.running.arguments import EmbeddedArguments
 from robot.running.testlibraries import TestLibrary
-from robot.utils import NormalizedDict, find_file
+from robot.utils import NormalizedDict
 from robot.variables import Variables
-from tabulate import tabulate
 
 from sherlock.complexity import ComplexityChecker
 from sherlock.file_utils import INCLUDE_EXT

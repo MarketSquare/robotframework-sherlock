@@ -1,6 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import Iterable, Iterator, List, Optional, Tuple
+from typing import List
 
 from pathspec import PathSpec
 
