@@ -16,6 +16,7 @@ def run_sherlock(robot_output, source, report=None, resource=None, pythonpath=No
         config.resource = resource
     if pythonpath is not None:
         config.pythonpath = _process_pythonpath([pythonpath])
+    config.validate_test_path()
 
     sherlock = Sherlock(config=config)
     sherlock.run()  # TODO create special report readable by tests?
@@ -134,7 +135,10 @@ class AcceptanceTest:
             robot_output = self.ROOT / "output.xml"
         else:
             robot_output = None
-        source = source or self.ROOT
+        if source:
+            source = source if source.is_dir() else source.parent
+        else:
+            source = self.ROOT
         run_sherlock(robot_output=robot_output, source=source, report=report, resource=resource, pythonpath=pythonpath)
         data = get_output(f"sherlock_{source.name}.json")
         return data

@@ -7,7 +7,7 @@ class TestDictVariables(AcceptanceTest):
     ROOT = Path(__file__).parent / "test_data"
 
     def test(self):
-        data = self.run_sherlock()
+        data = self.run_sherlock(source=self.ROOT / "test.robot")
         expected = Tree(
             name="test_data",
             res_type="Directory",
