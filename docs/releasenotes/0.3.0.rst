@@ -12,6 +12,12 @@ or to install exactly this version::
 
     pip install robotframework-sherlock==0.3.0
 
+New --pythonpath option to enable searching in extra paths (#46)
+----------------------------------------------------------------
+
+New ``--pythonpath`` option was added to allow specifying extra paths to be searched when looking for the test library.
+The supported syntax is the same as Robot Framework ``--pythonpath`` syntax.
+
 Reports are now dynamically loaded
 ----------------------------------
 

@@ -2,11 +2,11 @@ import json
 import subprocess
 from pathlib import Path
 
-from sherlock.config import Config
+from sherlock.config import Config, _process_pythonpath
 from sherlock.core import Sherlock
 
 
-def run_sherlock(robot_output, source, report=None, resource=None):
+def run_sherlock(robot_output, source, report=None, resource=None, pythonpath=None):
     config = Config(from_cli=False)
     config.output = robot_output
     config.path = source
@@ -14,6 +14,8 @@ def run_sherlock(robot_output, source, report=None, resource=None):
         config.report = report
     if resource is not None:
         config.resource = resource
+    if pythonpath is not None:
+        config.pythonpath = _process_pythonpath([pythonpath])
 
     sherlock = Sherlock(config=config)
     sherlock.run()  # TODO create special report readable by tests?
@@ -116,21 +118,24 @@ class AcceptanceTest:
     ROOT = Path()
     TEST_PATH = "test.robot"
 
-    def run_robot(self):
+    def run_robot(self, pythonpath=None):
         source = self.ROOT / self.TEST_PATH
-        cmd = f"robot --outputdir {self.ROOT} {source}".split()
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cmd = f"robot --outputdir {self.ROOT}"
+        if pythonpath:
+            cmd += f" --pythonpath {pythonpath}"
+        cmd += f" {source}"
+        subprocess.run(cmd.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    def run_sherlock(self, source=None, resource=None, report=None, run_robot=True):
+    def run_sherlock(self, source=None, resource=None, report=None, pythonpath=None, run_robot=True):
         if report is None:
             report = ["json"]
         if run_robot:
-            self.run_robot()
+            self.run_robot(pythonpath)
             robot_output = self.ROOT / "output.xml"
         else:
             robot_output = None
         source = source or self.ROOT
-        run_sherlock(robot_output=robot_output, source=source, report=report, resource=resource)
+        run_sherlock(robot_output=robot_output, source=source, report=report, resource=resource, pythonpath=pythonpath)
         data = get_output(f"sherlock_{source.name}.json")
         return data
 

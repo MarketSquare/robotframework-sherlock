@@ -1,4 +1,7 @@
 import argparse
+import glob
+import os
+import string
 from pathlib import Path
 from typing import List
 
@@ -18,6 +21,46 @@ class CommaSeparated(argparse.Action):
         setattr(namespace, self.dest, values.split(","))
 
 
+class PythonPath(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        container = getattr(namespace, self.dest)
+        paths = _process_pythonpath([values])
+        container.extend(paths)
+
+
+def _process_pythonpath(paths):
+    return [
+        os.path.abspath(globbed)
+        for path in paths
+        for split in _split_pythonpath(path)
+        for globbed in glob.glob(split) or [split]
+    ]
+
+
+def _split_pythonpath(path):
+    path = path.replace("/", os.sep)
+    if ";" in path:
+        yield from path.split(";")
+    elif os.sep == "/":
+        yield from path.split(":")
+    else:
+        drive = ""
+        for item in path.split(":"):
+            if drive:
+                if item.startswith("\\"):
+                    yield f"{drive}:{item}"
+                    drive = ""
+                    continue
+                yield drive
+                drive = ""
+            if len(item) == 1 and item in string.ascii_letters:
+                drive = item
+            else:
+                yield item
+        if drive:
+            yield drive
+
+
 class Config:
     def __init__(self, from_cli=True):
         self.path = Path.cwd()
@@ -26,6 +69,7 @@ class Config:
         self.report: List[str] = ["print"]
         self.variable = []
         self.variablefile = []
+        self.pythonpath = []
         self.robot_settings = None
         self.include_builtin = False
         self.root = Path.cwd()
@@ -116,6 +160,14 @@ class Config:
             action="store_true",
         )
         parser.add_argument(
+            "-P",
+            "--pythonpath",
+            help="Additional locations where to search libraries. Multiple paths can be given by separating them with "
+            "a semicolon (`;`) or by using this option several times.",
+            action=PythonPath,
+            default=self.pythonpath,
+        )
+        parser.add_argument(
             "--log-output",
             type=argparse.FileType("w"),
             help="Path to output log",
@@ -172,6 +224,8 @@ class TomlConfigParser:
                 read_config[key] = Path(value)
             elif key == "include_builtin":
                 read_config[key] = str(value).lower() in ("true", "1", "yes", "t", "y")  # TODO tests
+            elif key == "pythonpath":
+                read_config[key] = _process_pythonpath(value)
             elif key in self.look_up:
                 read_config[key] = value
             else:

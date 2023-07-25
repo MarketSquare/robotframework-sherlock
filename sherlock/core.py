@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from typing import List, Optional
 
@@ -22,6 +23,8 @@ class Sherlock:
         self.log("Sherlock analysis of Robot Framework code:\n")
         root = self.config.path
         self.log(f"Using {root.resolve()} as source repository")
+        if self.config.pythonpath:
+            sys.path = self.config.pythonpath + sys.path
 
         if self.from_output:
             suite = ExecutionResult(self.config.output).suite

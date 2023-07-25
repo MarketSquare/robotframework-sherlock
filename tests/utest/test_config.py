@@ -66,22 +66,34 @@ class TestConfig:
 
     def test_load_args_from_cli_config_option(self, path_to_test_data, tmp_path):
         config_dir = path_to_test_data / "configs" / "pyproject"
-        with working_directory(config_dir), patch.object(
-            sys, "argv", f"sherlock --config pyproject_other.toml {tmp_path}".split()
-        ):
+        cmd = f"sherlock --config pyproject_other.toml {tmp_path}".split()
+        with working_directory(config_dir), patch.object(sys, "argv", cmd):
             config = Config()
             assert config.path == Path(tmp_path)
             assert config.log_output is None
             assert config.report == ["print"]
 
     def test_load_args_from_config_missing_file(self, tmp_path):
-        with patch.object(sys, "argv", f"sherlock --config idontexist.toml {tmp_path}".split()), pytest.raises(
-            SherlockFatalError
-        ) as err:
+        cmd = f"sherlock --config idontexist.toml {tmp_path}".split()
+        with patch.object(sys, "argv", cmd), pytest.raises(SherlockFatalError) as err:
             Config()
         assert "Configuration file 'idontexist.toml' does not exist" in str(err)
 
+    @pytest.mark.parametrize(
+        "python_path, exp_python_path",
+        [
+            (".", [str(Path.cwd())]),
+            (f".;{Path('test_libraries')}", [str(Path.cwd()), str(Path.cwd() / "test_libraries")]),
+        ],
+    )
+    def test_pythonpath(self, tmp_path, python_path, exp_python_path):
+        cmd = f"sherlock --pythonpath {python_path} {tmp_path}".split()
+        with patch.object(sys, "argv", cmd):
+            config = Config()
+            assert sorted(exp_python_path) == sorted(config.pythonpath)
 
+
+# TODO TOML pythonpath
 class TestTomlParser:
     def test_read_toml_data(self, path_to_test_data):
         config_path = path_to_test_data / "configs" / "pyproject" / "pyproject.toml"
@@ -141,3 +153,9 @@ class TestTomlParser:
             rf"Failed to decode {config_path}: This float doesn't have a leading digit (line 3 column 1 char 38)"
             in err.value.args[0]
         )
+
+    def test_get_config_python_path(self, path_to_test_data):
+        config_path = path_to_test_data / "configs" / "pyproject_pythonpath" / "pyproject.toml"
+        look_up = Config(from_cli=False).__dict__
+        config = TomlConfigParser(config_path=config_path, look_up=look_up).get_config()
+        assert config == {"pythonpath": [str(Path.cwd() / "test_libs")], "report": ["html"]}

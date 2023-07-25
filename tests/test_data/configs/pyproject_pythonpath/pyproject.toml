@@ -1,0 +1,5 @@
+[tool.sherlock]
+report = "html"
+pythonpath = [
+    "test_libs"
+]
