@@ -2,6 +2,7 @@ import os
 from collections import OrderedDict
 from pathlib import Path
 
+import robot.errors
 from robot.api import SuiteVisitor
 from robot.errors import DataError
 from robot.utils import NormalizedDict, find_file
@@ -21,7 +22,11 @@ def _normalize_library_path(library):
 def _get_library_name(name, directory):
     if not _is_library_by_path(name):
         return name
-    return find_file(name, directory, LIBRARY_TYPE)  # TODO handle DataError when not found
+    try:
+        return find_file(name, directory, LIBRARY_TYPE)
+    except robot.errors.DataError as err:
+        print(f"Failed to import library: {err}")
+        return None
 
 
 def _is_library_by_path(path):
@@ -68,8 +73,10 @@ class StructureVisitor(SuiteVisitor):
             library = current_variables.replace_string(lib)
             library = _normalize_library_path(library)
             library = _get_library_name(library, resource.directory)
+            if library is None:
+                continue
             if library in self.resources:
-                self.resources[library].load_library(args, current_variables)
+                self.resources[library].load_library(args, current_variables, resource.path)
                 lib_name = alias or self.resources[library].name
                 self.imported_libraries[lib_name] = self.resources[library]
 

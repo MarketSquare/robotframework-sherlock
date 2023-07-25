@@ -262,10 +262,9 @@ class Library(File):
     def get_type(self):
         return self.type
 
-    def load_library(self, args=None, scope_variables=None):
+    def load_library(self, args, scope_variables, defined_in_file):
         if self.keywords:
             return
-        # TODO handle exceptions (not enough args etc)
         error = False
         if scope_variables is not None and args:
             replaced_args = []
@@ -283,9 +282,15 @@ class Library(File):
         if error:
             return
         name = str(self.path)
-        library = TestLibrary(name, replaced_args)
-        self.name = library.orig_name
-        self.keywords = KeywordLibraryStore(library, name)
+        self.init_library(name, replaced_args, defined_in_file)
+
+    def init_library(self, name, replaced_args, defined_in_file):
+        try:
+            library = TestLibrary(name, replaced_args)
+            self.name = library.orig_name
+            self.keywords = KeywordLibraryStore(library, name)
+        except robot.errors.DataError as err:
+            self.errors.add(f"{defined_in_file}: {err}")
 
     def search(self, name):
         if not self.keywords:

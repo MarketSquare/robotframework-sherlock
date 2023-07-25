@@ -74,7 +74,7 @@ class Sherlock:
 
     def create_builtin_tree(self):
         built_in = Library(BUILT_IN)
-        built_in.load_library()
+        built_in.load_library([], [], "builtin")
         built_in.filter_not_used = True
         built_in.builtin = True
 
