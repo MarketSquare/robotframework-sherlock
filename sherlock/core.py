@@ -63,14 +63,17 @@ class Sherlock:
         for resource in self.config.resource:
             resource = Path(resource)
             resolved = resource.resolve()  # TODO search in pythonpaths etc, iterate over directories if not file
-            if not resolved.exists() or resolved.suffix == ".py":
-                res_model = Library(resolved)
+            if resolved.is_dir():
+                yield self.map_resources_for_path(resolved)
             else:
-                res_model = Resource(resolved)
-            self.resources[str(resolved)] = res_model
-            tree = Tree(name=resource.name)
-            tree.children.append(res_model)
-            yield tree
+                if not resolved.exists() or resolved.suffix == ".py":
+                    res_model = Library(resolved)
+                else:
+                    res_model = Resource(resolved)
+                self.resources[str(resolved)] = res_model
+                tree = Tree(name=resource.name)
+                tree.children.append(res_model)
+                yield tree
 
     def create_builtin_tree(self):
         built_in = Library(BUILT_IN)

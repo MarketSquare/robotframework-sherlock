@@ -26,6 +26,13 @@ displayed in the report::
     │   Import errors:
     │       D:\test.robot: Library 'LibraryWithArgs' expected 1 argument, got 0.
 
+External resource can be loaded from the directory (#54)
+--------------------------------------------------------
+
+It is now possible to load external resource/libraries for analysis from the directory::
+
+    sherlock --resource external_libs/ tests
+
 New --pythonpath option to enable searching in extra paths (#46)
 ----------------------------------------------------------------
 

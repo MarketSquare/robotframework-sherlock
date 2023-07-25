@@ -5,7 +5,7 @@ from pathlib import Path
 import robot.errors
 from robot.api import SuiteVisitor
 from robot.errors import DataError
-from robot.utils import NormalizedDict, find_file
+from robot.utils import find_file
 from robot.variables.scopes import VariableScopes
 from robot.variables.variables import Variables
 

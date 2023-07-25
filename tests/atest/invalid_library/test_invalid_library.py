@@ -14,6 +14,7 @@ class TestInvalidLibrary(AcceptanceTest):
                 Tree(name="Library.py", keywords=[]),
                 Tree(name="LibraryWithArgs.py", keywords=[]),
                 Tree(name="LibraryWithFailingInit.py", keywords=[]),
+                Tree(name="LibraryAccessRunning.py", keywords=[]),
                 Tree(name="test.robot", keywords=[Keyword(name="Keyword 1", used=1, complexity=1)]),
             ],
         )
