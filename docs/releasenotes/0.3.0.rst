@@ -56,13 +56,22 @@ Reports are now dynamically loaded
 Fixes
 =====
 
-Fix Sherlock in Robot Framework 6.0
------------------------------------
+Sherlock with Robot Framework 6.0
+---------------------------------
 
 Sherlock shall now support Robot Framework 6.0+.
+
+Dictionary values with equals sign (#92)
+----------------------------------------
+
+Dictionary values with equals sign should be parsable by Sherlock now::
+
+    *** Variables ***
+    &{MY_DICT}=     key=string with = sign
 
 Other
 =====
 
 - Sherlock now requires at least Python 3.8 to run
 - improved configuration validations. Sherlock will now display human readable error if configured with invalid value
+- unexpected exceptions during parsing the resource files will now contain source file path

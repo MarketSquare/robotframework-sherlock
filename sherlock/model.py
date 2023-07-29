@@ -169,7 +169,7 @@ class ResourceVisitor(ast.NodeVisitor):
     def set_dict(values):
         ret = {}
         for value in values:
-            key, val = value.split("=") if "=" in value else (value, "")
+            key, val = value.split("=", maxsplit=1) if "=" in value else (value, "")
             ret[key] = val
         return ret
 
@@ -301,9 +301,7 @@ class Resource(File):
         self.name = path.name  # TODO Resolve chaos with names and paths
         self.directory = str(path.parent)
 
-        model = get_model(str(path), data_only=True, curdir=str(path.cwd()))
-        visitor = ResourceVisitor(str(path))
-        visitor.visit(model)
+        visitor = self.load_model_from_resource(path)
         self.keywords = KeywordResourceStore(visitor.normal_keywords, visitor.embedded_keywords, str(path))
         self.has_tests = visitor.has_tests
         self.variables = visitor.variables
@@ -311,6 +309,17 @@ class Resource(File):
 
         self.resources = visitor.resources
         self.libraries = visitor.libraries
+
+    @staticmethod
+    def load_model_from_resource(path):
+        model = get_model(str(path), data_only=True, curdir=str(path.cwd()))
+        visitor = ResourceVisitor(str(path))
+        try:
+            visitor.visit(model)
+        except Exception as err:
+            print(f"Fatal error when parsing the file: {path}")
+            raise err
+        return visitor
 
     def get_type(self):
         return SUITE_TYPE if self.has_tests else RESOURCE_TYPE
