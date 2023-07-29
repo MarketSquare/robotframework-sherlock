@@ -7,6 +7,8 @@ ${VAR2}    ENV2  # comment
 VAR  3
 &{CONTAINS_OTHER}    &{MANY}
 &{INVALID}    key
+&{EQUAL_SIGN}=    key=string with = sign
+&{EQUAL_SIGN} =    key=string with = sign
 &{EMPTY}
 
 *** Test Cases ***
