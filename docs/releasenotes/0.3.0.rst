@@ -51,7 +51,8 @@ In such case Sherlock will use file parent directory as a base.
 Reports are now dynamically loaded
 ----------------------------------
 
-<TODO: release notes about rewriting reports to be dynamically loaded, such as Robocop reports>
+Refactored reports to work as Robocop reports. It opens possibility for external reports in the future or integration
+between other tools.
 
 Fixes
 =====
